@@ -823,6 +823,7 @@ Contributions are welcome, please read the [CONTRIBUTING](.github/CONTRIBUTING.m
 # Credits
 The repository is modeled after the [VMware Packer Examples][packer-examples-for-vsphere] repository. As someone who initially struggled with organization of a packer project, the VMware repository helped me significantly.
 
+Forked from [here](https://github.com/ajschroeder/proxmox-packer-examples) with some minor tweaks by the traefikturkey team.  Credit goes to [TheHitman1977](https://github.com/ajschroeder) for the initial work.
 
 [//]: Links
 [ansible]: https://www.ansible.com
