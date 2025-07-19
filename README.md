@@ -7,10 +7,10 @@
 1. [Download](#download)
 1. [Configuration](#configuration)
 1. [Packer Machine Image Builds](#packer-machine-image-builds)
+1. [Terraform](#terraform)
 1. [Troubleshoot](#troubleshoot)
 1. [Known Issues](#known-issues)
 1. [Unsupported Features](#unsupported-features)
-1. [Terraform] (#Terraform)
 1. [Contributing](#contributing)
 1. [Credits](#credits)
 
@@ -789,6 +789,9 @@ Both UEFI and BIOS booting are supported for builds. Inside the `<build type>.pk
 >
 >   The storage layouts are different for each bootloader type so you'll need to configure the storage layouts accordingly.
 
+# Terraform
+An example Terraform for a UEFI Ubuntu 24.04 template is included.  For more information [go here](example_uefi_ubuntu_terraform/README.md)
+
 ### Cloud-Init
 All builds for operating systems that support [cloud-init][cloud-init] now have the option to enable it. This can be done on a per-build basis inside the `<build type>.pkrvars.hcl` files in the `config` directory. The default setting is `true`.
 
@@ -813,9 +816,6 @@ iso_file             = "Name-of-Windows-11-Non-Evaluation-DVD.iso"  <-- This is 
 If your template build hangs or times out, re-run it and then open the console of the template VM and see if Windows is waiting for you to select an Operating System. Select the Operating System version and then click Next and the build should work hands-off the rest of the way. If you want this to be completely hands-off, just change the `vm_inst_os_image_pro` and/or `vm_inst_os_image_ent` vars to match the Operating System selection entry exactly. Then the next time you execute the particular Windows template build, it shouldn't get stuck waiting for input.
 
 # Unsupported Features
-
-# Terraform
-An example Terraform for a UEFI Ubuntu 24.04 template is included.  For more information [go here](example_uefi_ubuntu_terraform/README.md)
 
 # Contributing
 Contributions are welcome, please read the [CONTRIBUTING](.github/CONTRIBUTING.md) document for more details.
