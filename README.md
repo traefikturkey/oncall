@@ -10,7 +10,7 @@
 1. [Troubleshoot](#troubleshoot)
 1. [Known Issues](#known-issues)
 1. [Unsupported Features](#unsupported-features)
-1. [Terraform] (#terraform)
+1. [Terraform] (#Terraform)
 1. [Contributing](#contributing)
 1. [Credits](#credits)
 
@@ -815,7 +815,7 @@ If your template build hangs or times out, re-run it and then open the console o
 # Unsupported Features
 
 # Terraform
-An example Terraform for a UEFI Ubuntu 24.04 template is included.  For more information [go here](./example_uefi_ubuntu_terraform/README.md)
+An example Terraform for a UEFI Ubuntu 24.04 template is included.  For more information [go here](example_uefi_ubuntu_terraform/README.md)
 
 # Contributing
 Contributions are welcome, please read the [CONTRIBUTING](.github/CONTRIBUTING.md) document for more details.
