@@ -1,7 +1,7 @@
 # Terraform
 
 ## Initial configuration
-Update the terraform.tfvars file with the appropriate values, required updates are marked below
+Update the [terraform.tfvars](terraform.tfvars) file with the appropriate values, minimum required updates are marked below
 
 ```
 # terraform.tfvars
