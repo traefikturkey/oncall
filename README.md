@@ -24,26 +24,26 @@ The following builds are available:
 
 ## Linux Distributions
 
-| Operating System | Version   | Custom Storage Config | Static IP Support  | UEFI Bootloader    | BIOS Bootloader    |
-| :---             | :---      | :---:                 | :---:              | :---:              | :---:              |
-| AlmaLinux        | 10        | &check;               | &check;            | &check;            | &check;            |
-| AlmaLinux        | 9         | &check;               | &check;            | &check;            | &check;            |
-| AlmaLinux        | 8         | &check;               | &check;            | &check;            | &check;            |
-| CentOS Stream    | 10        | &check;               | &check;            | &check;            | &check;            |
-| CentOS Stream    | 9         | &check;               | &check;            | &check;            | &check;            |
-| Debian           | 12        | &check;               | &check;            | &check;            | &check;            |
-| Debian           | 11        | &check;               | &check;            | &check;            | &check;            |
-| OpenSUSE Leap    | 15.6      | &check;               | &check;            | &check;            | &check;            |
-| OpenSUSE Leap    | 15.5      | &check;               | &check;            | &check;            | &check;            |
-| Oracle Linux     | 9         | &check;               | &check;            | &check;            | &check;            |
-| Oracle Linux     | 8         | &check;               | &check;            | &check;            | &check;            |
-| Rocky Linux      | 10        | &check;               | &check;            | &check;            | &check;            |
-| Rocky Linux      | 9         | &check;               | &check;            | &check;            | &check;            |
-| Rocky Linux      | 8         | &check;               | &check;            | &check;            | &check;            |
-| Ubuntu Server    | 24.04 LTS | &check;               | &check;            | &check;            | &check;            |
-| Ubuntu Server    | 22.04 LTS | &check;               | &check;            | &check;            | &check;            |
-| Ubuntu Server    | 20.04 LTS | &check;               | &check;            | &check;            | &check;            |
-| Windows Desktop  | 11        |                       |                    | &check;            | N/A                |
+| Operating System | Version   | Custom Storage Config | Static IP Support  | UEFI Bootloader    | BIOS Bootloader    | pve static vm_id   |
+| :---             | :---      | :---:                 | :---:              | :---:              | :---:              | :---:              |
+| AlmaLinux        | 10        | &check;               | &check;            | &check;            | &check;            | random             |
+| AlmaLinux        | 9         | &check;               | &check;            | &check;            | &check;            | random             |
+| AlmaLinux        | 8         | &check;               | &check;            | &check;            | &check;            | random             |
+| CentOS Stream    | 10        | &check;               | &check;            | &check;            | &check;            | 10013              |
+| CentOS Stream    | 9         | &check;               | &check;            | &check;            | &check;            | 10014              |
+| Debian           | 12        | &check;               | &check;            | &check;            | &check;            | 10011              |
+| Debian           | 11        | &check;               | &check;            | &check;            | &check;            | 10012              |
+| OpenSUSE Leap    | 15.6      | &check;               | &check;            | &check;            | &check;            | 10010              |
+| OpenSUSE Leap    | 15.5      | &check;               | &check;            | &check;            | &check;            | 10009              |
+| Oracle Linux     | 9         | &check;               | &check;            | &check;            | &check;            | 10007              |
+| Oracle Linux     | 8         | &check;               | &check;            | &check;            | &check;            | 10008              |
+| Rocky Linux      | 10        | &check;               | &check;            | &check;            | &check;            | 10004              |
+| Rocky Linux      | 9         | &check;               | &check;            | &check;            | &check;            | 10005              |
+| Rocky Linux      | 8         | &check;               | &check;            | &check;            | &check;            | 10006              |
+| Ubuntu Server    | 24.04 LTS | &check;               | &check;            | &check;            | &check;            | 10001              |
+| Ubuntu Server    | 22.04 LTS | &check;               | &check;            | &check;            | &check;            | 10000              |
+| Ubuntu Server    | 20.04 LTS | &check;               | &check;            | &check;            | &check;            | 10003              |
+| Windows Desktop  | 11        |                       |                    | &check;            | N/A                | random             |
 
 ## Requirements
 
@@ -238,6 +238,11 @@ Los Angeles: `us-west-2`
 This is useful for the purposes of running machine image builds for different environment.
 
 ## Configuration Variables
+
+## Proxmox Virtual Machine IDs
+Each template has a preset static vm_id.
+
+These can be changed by editing the `./config/*/(linux or windows)-(*).pkr.hcl` files.
 
 ### Ansible Variables
 
