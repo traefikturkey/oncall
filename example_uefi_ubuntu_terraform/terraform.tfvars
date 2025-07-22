@@ -12,9 +12,9 @@ disk_size = "30G"
 ipconfig_set = "dhcp"
 cloud_user = "ubuntu"
 pub_ssh_key_path = "~/.ssh/id_rsa.pub" 
-pm_api_url = "https://192.168.1.2:8006/api2/json"
-pm_api_token_secret = ""
-pm_api_token_id = "root@pam!terraform" 
+proxmox_api_url = "https://192.168.1.2:8006/api2/json"
+proxmox_token_secret = ""
+token_id = "root@pam!terraform" 
 
 
 
