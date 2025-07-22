@@ -22,16 +22,32 @@ resource "proxmox_vm_qemu" "main" {
     
      }
 
-    # cloudinit_cdrom_storage = "primary"
     scsihw   = "virtio-scsi-single" 
     boot     = "order=virtio0;net0"
     bootdisk = "virtio0"
     
-    disk {
-       storage = var.disk_datastore
-       size    = var.disk_size
-       slot    = "virtio0"
-     }
+    disks {
+        virtio {
+            virtio0 {
+                disk{
+                    storage = var.disk_datastore
+                    size    = var.disk_size
+                }
+            }
+        }
+        ide {
+            ide0 {
+                cloudinit {
+                    storage = var.disk_datastore
+                }
+            }
+       }
+    }
+    efidisk {
+        efitype = "4m"
+        storage = var.disk_datastore
+        pre_enrolled_keys = false
+    }     
 
     # Cloud-init options
     # Keep in mind to use the CIDR notation for the ip.
