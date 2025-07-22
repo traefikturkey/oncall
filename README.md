@@ -797,6 +797,8 @@ Both UEFI and BIOS booting are supported for builds. Inside the `<build type>.pk
 # Terraform
 An example Terraform for a UEFI Ubuntu 24.04 template is included.  For more information [go here](example_uefi_ubuntu_terraform/README.md)
 
+There is also a script to import an existing vm to use as an example for building Terraform builds.  For more information [go here](terraform_import/README.md)
+
 ### Cloud-Init
 All builds for operating systems that support [cloud-init][cloud-init] now have the option to enable it. This can be done on a per-build basis inside the `<build type>.pkrvars.hcl` files in the `config` directory. The default setting is `true`.
 
