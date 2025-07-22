@@ -1,0 +1,5 @@
+node            = "pve"
+vm_id           = "100"
+token_secret    = ""
+token_id        = "root@pam!terraform"
+pve_ip          = "192.168.1.50"
