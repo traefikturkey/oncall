@@ -27,3 +27,10 @@ Run the commands
 - `terraform init`
 - `terraform plan`
 - `terraform apply` or `terraform apply --auto-approve`
+
+## NOTES
+
+telmate/promxox hasn't fully upgraded to support Proxmox 9.x yet.  As a workaround, I've added a line to the main.tf to not do the minimum permissions check.
+
+- Added line:
+- `pm_minimum_permission_check = false`
