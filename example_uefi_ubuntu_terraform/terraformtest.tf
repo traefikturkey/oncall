@@ -1,13 +1,13 @@
 resource "proxmox_vm_qemu" "main" {
-    target_node = "pve"
-    name = var.vmname
-    vmid = var.vm_id
-    os_type = "cloud-init"
-    bios = "ovmf" # to use UEFI
-    # The template name to clone this vm from
-    clone = var.templatename
-    # Activate QEMU agent for this VM
-    agent = 1
+  target_node = var.proxmox_node
+  name        = var.vmname
+  vmid        = var.vm_id
+  os_type     = "cloud-init"
+  bios        = "ovmf" # to use UEFI
+  # The template name to clone this vm from
+  clone = var.templatename
+  # Activate QEMU agent for this VM
+  agent = 1
 
   cpu {
     cores = var.cpu_cores

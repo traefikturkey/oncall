@@ -1,3 +1,9 @@
+variable "proxmox_node" {
+  description = "Proxmox Node Name"
+  type        = string
+  default     = "pve"
+}
+
 variable "proxmox_api_url" {
  description = "Proxmox API Url"
  type        = string
