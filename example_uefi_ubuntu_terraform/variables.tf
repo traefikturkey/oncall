@@ -16,10 +16,10 @@ variable "token_id" {
  sensitive   = true
 }
 
-variable "cpu_sockets" {
- description = "Number of sockets for VM"
- type        = string
- default     = "2"
+variable "cpu_cores" {
+  description = "Number of sockets for VM"
+  type        = string
+  default     = "2"
 }
 
 variable "vmname" {

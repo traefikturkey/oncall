@@ -1,5 +1,4 @@
 # Example tfvars
-cpu_sockets = "2"
 ram_amount = "4096"
 vmname = "testvm"
 vm_id = "0"
@@ -13,6 +12,7 @@ ipconfig_set = "dhcp"
 cloud_user = "ubuntu"
 pub_ssh_key_path = "~/.ssh/id_rsa.pub" 
 proxmox_api_url = "https://192.168.1.2:8006/api2/json"
+cpu_cores            = "2"
 proxmox_token_secret = ""
 token_id = "root@pam!terraform" 
 
