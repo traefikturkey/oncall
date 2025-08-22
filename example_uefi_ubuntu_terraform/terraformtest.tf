@@ -9,9 +9,9 @@ resource "proxmox_vm_qemu" "main" {
     # Activate QEMU agent for this VM
     agent = 1
 
-    sockets = var.cpu_sockets
-    vcpus = 0
-    memory = var.ram_amount
+  cpu {
+    cores = var.cpu_cores
+  }
 
     network {
         id = 0
