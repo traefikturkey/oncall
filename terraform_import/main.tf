@@ -14,6 +14,7 @@ provider "proxmox" {
     pm_api_url = "https://${var.pve_ip}:8006/api2/json"
     pm_api_token_secret = var.token_secret
     pm_api_token_id = var.token_id
+    pm_minimum_permission_check = false # needed until telmate/proxmox updates to fully support PVE 9.x
 }
 
 resource "proxmox_vm_qemu" "importvm" {
