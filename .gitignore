@@ -1,4 +1,5 @@
 # Ansible and ansible-lint
+ansible/roles/geerlingguy.docker
 **/.ansible
 
 !**/template_*
@@ -7,6 +8,17 @@
 # Configurations
 # Ignore default config directory.
 config/
+config_*/
+
+# Ignore terraform config
+terraform/
+
+#terraform import excludes
+terraform_import/.terraform.lock.hcl
+terraform_import/.terraform/
+terraform_import/*.tfstate
+terraform_import/terraform.tfvars
+
 
 # Manifests
 # Ignore manifests directory.
