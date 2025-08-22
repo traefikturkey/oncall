@@ -19,7 +19,6 @@ terraform_import/.terraform/
 terraform_import/*.tfstate
 terraform_import/terraform.tfvars
 
-
 # Manifests
 # Ignore manifests directory.
 manifests/*.json
@@ -41,3 +40,5 @@ manifests/*.json
 plugin.hwm
 plugin.pwd
 plugin.pwi
+
+.gitmodules
