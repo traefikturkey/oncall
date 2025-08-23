@@ -42,10 +42,14 @@
       loop:
         - /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
         - /etc/cloud/cloud.cfg.d/99-installer.cfg
+        - /etc/cloud/cloud.cfg.d/90-installer-network.cfg
         - /etc/netplan/00-installer-config.yaml
     - ansible.builtin.copy:
         content: "datasource_list: [ NoCloud, ConfigDrive ]"
         dest: /etc/cloud/cloud.cfg.d/99_pve.cfg
+    - ansible.builtin.file:
+        path: /etc/cloud/cloud-init.disabled
+        state: absent
   when: enable_cloudinit == 'true'
 
 # Tasks for setting SSH keys to regenerate.
