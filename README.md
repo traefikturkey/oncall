@@ -804,6 +804,8 @@ All builds for operating systems that support [cloud-init][cloud-init] now have 
 
 If a particular linux distribution ships with cloud-init (e.g. Ubuntu) and cloud-init is set to `false` in the `config/<build type>.pkrvars.hcl` file for the build, then cloud-init will be disabled in the operating system **and** within Proxmox for that specific template.
 
+You can also change the Cloud-Init storage backend using the `vm_cloudinit_disk_type` variable. See the [Packer Proxmox Integration docs](https://developer.hashicorp.com/packer/integrations/hashicorp/proxmox/latest/components/builder/iso) for more details.
+
 # Known Issues
 
 ## Windows Builds
