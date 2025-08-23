@@ -180,6 +180,13 @@ variable "vm_cloudinit" {
   default     = false
 }
 
+variable "vm_cloudinit_disk_type" {
+  type = string
+  description = "the disk controller used for the Cloud-Init CDROM drive. Example values ide, scsi, virtio."
+  default = "ide"
+}
+
+
 // Removable Media Settings
 
 variable "common_iso_storage" {
