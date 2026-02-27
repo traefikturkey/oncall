@@ -1,4 +1,4 @@
-# Packer Examples for Proxmox
+# Oncall - Packer for Proxmox
 
 ## Table of Contents
 
@@ -189,8 +189,8 @@ Operating systems and versions tested with the project:
 After installing the required software, the quickest way to get building is to clone this repository.
 
 ```shell
-git clone https://github.com/ajschroeder/packer-examples-for-proxmox.git
-cd packer-examples-for-proxmox
+git clone https://github.com/traefikturkey/oncall.git
+cd oncall
 ```
 
 The following table describes the directory structure.
