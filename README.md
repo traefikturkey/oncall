@@ -40,6 +40,7 @@ The following builds are available:
 | Rocky Linux      | 10        | &check;               | &check;            | &check;            | &check;            | 10004              |
 | Rocky Linux      | 9         | &check;               | &check;            | &check;            | &check;            | 10005              |
 | Rocky Linux      | 8         | &check;               | &check;            | &check;            | &check;            | 10006              |
+| Ubuntu Server    | 26.04 LTS | &check;               | &check;            | &check;            | &check;            | 10015              |
 | Ubuntu Server    | 24.04 LTS | &check;               | &check;            | &check;            | &check;            | 10001              |
 | Ubuntu Server    | 22.04 LTS | &check;               | &check;            | &check;            | &check;            | 10000              |
 | Ubuntu Server    | 20.04 LTS | &check;               | &check;            | &check;            | &check;            | 10003              |

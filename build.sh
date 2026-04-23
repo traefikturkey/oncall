@@ -787,6 +787,43 @@ menu_option_20() {
   echo "Done."
 }
 
+menu_option_21() {
+  INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/26-04-lts/
+  BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
+  BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
+
+  echo -e "\nCONFIRM: Build a Ubuntu Server 26.04 LTS Template for Proxmox?"
+  echo -e "\nContinue? (y/n)"
+  read -r REPLY
+  if [[ ! $REPLY =~ ^[Yy]$ ]]
+  then
+    exit 1
+  fi
+
+  ### Build a Ubuntu Server 26.04 LTS Template for Proxmox. ###
+  echo "Building a Ubuntu Server 26.04 LTS Template for Proxmox..."
+
+  ### Initialize HashiCorp Packer and required plugins. ###
+  echo "Initializing HashiCorp Packer and required plugins..."
+  packer init "$INPUT_PATH"
+
+  ### Start the Build. ###
+  echo "Starting the build...."
+  echo "packer build -force -on-error=ask $debug_option"
+  packer build -force -on-error=ask $debug_option \
+      -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/linux-storage.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/network.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/proxmox.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/$BUILD_VARS" \
+      "$INPUT_PATH"
+
+  ### All done. ###
+  echo "Done."
+}
+
 press_enter() {
   cd "$SCRIPT_PATH"
   echo -n "Press Enter to continue."
@@ -839,6 +876,7 @@ until [ "$selection" = "0" ]; do
   echo "       18 -  Windows 11 - All"
   echo "       19 -  Windows 11 - Enterprise Only"
   echo "       20 -  Windows 11 - Professional Only"
+  echo "       21 -  Ubuntu Server 26.04 LTS"
   echo ""
   echo "      Other:"
   echo ""
@@ -868,6 +906,7 @@ until [ "$selection" = "0" ]; do
     18) clear ; menu_option_18 ; press_enter ;;
     19) clear ; menu_option_19 ; press_enter ;;
     20) clear ; menu_option_20 ; press_enter ;;
+    21) clear ; menu_option_21 ; press_enter ;;
     [Ii] ) clear ; info ; press_enter ;;
     [Qq] ) clear ; exit ;;
     * ) clear ; incorrect_selection ; press_enter ;;
