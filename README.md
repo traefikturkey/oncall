@@ -225,6 +225,29 @@ Configuration templates are automatically created when you run `./docker-build.s
 
 Then customize the `.pkrvars.hcl` files for your infrastructure.
 
+### Local NixOS QEMU Smoke Test
+
+The NixOS template also has a local Packer+QEMU smoke test under `tests/nixos-qemu`.
+
+This path is useful for iterating on the installer boot sequence and generated `configuration.nix` without needing Proxmox credentials.
+
+Requirements:
+
+- `packer`
+- `qemu-system-x86_64`
+- `qemu-img`
+
+Example:
+
+```shell
+cp tests/nixos-qemu/test.pkrvars.hcl.example tests/nixos-qemu/test.pkrvars.hcl
+./tests/nixos-qemu/run.sh
+```
+
+The QEMU smoke test currently defaults to a BIOS install path to keep local testing simple. The main Proxmox NixOS build remains available under `builds/linux/nixos/25.11`.
+
+The `config` folder is the default folder. You can override the default by passing an alternate value as the first argument.
+
 ### Essential Configuration Files
 
 #### 1. Proxmox Connection (`config/proxmox.pkrvars.hcl`)
