@@ -56,7 +56,7 @@ source "qemu" "nixos" {
   net_device       = var.vm_network_card_model
   output_directory = var.output_directory
   qemuargs = [
-    ["-serial", "file:${var.output_directory}/serial.log"]
+    ["-serial", "file:${abspath(path.root)}/serial.log"]
   ]
   shutdown_timeout = var.shutdown_timeout
   vm_name          = "${var.vm_os_name}-${var.vm_os_version}-qemu"
