@@ -41,4 +41,8 @@ plugin.hwm
 plugin.pwd
 plugin.pwi
 
+*.log
 .gitmodules
+
+# Local QEMU test SSH keys
+tests/ubuntu-qemu/test_ssh_key
