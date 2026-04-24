@@ -289,6 +289,24 @@ variable "build_key" {
   #  sensitive   = true
 }
 
+variable "ssh_authorized_keys" {
+  type        = list(string)
+  description = "Public SSH keys authorized for the build user when fixed SSH key mode is enabled."
+  default     = []
+}
+
+variable "ssh_private_key_file" {
+  type        = string
+  description = "Private SSH key file Packer should use when fixed SSH key mode is enabled."
+  default     = null
+}
+
+variable "use_fixed_ssh_key" {
+  type        = bool
+  description = "Use the configured SSH key instead of the default non-persistent communicator path."
+  default     = false
+}
+
 variable "timeout" {
   description = "not sure why I need so high a timeout but here we are"
   default     = "90m"

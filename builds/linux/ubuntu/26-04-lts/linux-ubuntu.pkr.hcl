@@ -68,12 +68,15 @@ locals {
   manifest_date     = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   manifest_path     = "${path.cwd}/manifests/"
   manifest_output   = "${local.manifest_path}${local.manifest_date}.json"
+  ssh_authorized_keys = var.use_fixed_ssh_key ? var.ssh_authorized_keys : []
+  ssh_private_key_file = var.use_fixed_ssh_key ? var.ssh_private_key_file : null
   data_source_content = {
     "/meta-data" = file("${abspath(path.root)}/data/meta-data")
     "/user-data" = templatefile("${abspath(path.root)}/data/user-data.pkrtpl.hcl", {
       build_username           = var.build_username
       build_password           = var.build_password
       build_password_encrypted = var.build_password_encrypted
+      ssh_authorized_keys      = local.ssh_authorized_keys
       vm_disk_type             = local.vm_disk_type
       vm_os_language           = var.vm_os_language
       vm_os_keyboard           = var.vm_os_keyboard
@@ -143,11 +146,12 @@ source "proxmox-iso" "ubuntu" {
     }
   }
 
-  ssh_username = "${var.build_username}"
-  ssh_password = "${var.build_password}"
-  ssh_timeout  = "${var.timeout}"
-  ssh_port     = "22"
-  qemu_agent   = true
+  ssh_username         = "${var.build_username}"
+  ssh_password         = var.use_fixed_ssh_key ? null : "${var.build_password}"
+  ssh_private_key_file = local.ssh_private_key_file
+  ssh_timeout          = "${var.timeout}"
+  ssh_port             = "22"
+  qemu_agent           = true
 
   network_adapters {
     bridge   = "${var.vm_bridge_interface}"
