@@ -23,6 +23,43 @@
     state: restarted
     daemon_reload: true
 
+# Cloud images are chatty on first login; templates should be quiet by default.
+- name: "Disabling Ubuntu MOTD news."
+  ansible.builtin.lineinfile:
+    path: /etc/default/motd-news
+    regexp: '^ENABLED='
+    line: 'ENABLED=0'
+    create: true
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: "Finding dynamic MOTD scripts."
+  ansible.builtin.find:
+    paths: /etc/update-motd.d
+    file_type: file
+  register: ubuntu_motd_scripts
+
+- name: "Disabling dynamic MOTD scripts."
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: '0644'
+  loop: "{{ ubuntu_motd_scripts.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: "Suppressing MOTD for template-created users."
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - /etc/skel/.hushlogin
+    - "/home/{{ build_username }}/.hushlogin"
+    - "/home/{{ ansible_username | default('ansible') }}/.hushlogin"
+
 # Tasks for disabling systemd-tmpfiles.
 - name: "Disabling systemd-tmpfiles."
   ansible.builtin.replace:
