@@ -15,6 +15,12 @@ ${network}
   ssh:
     install-server: true
     allow-pw: true
+%{ if length(ssh_authorized_keys) > 0 ~}
+    authorized-keys:
+%{ for key in ssh_authorized_keys ~}
+      - ${key}
+%{ endfor ~}
+%{ endif ~}
   packages:
     - openssh-server
     - qemu-guest-agent
