@@ -6,6 +6,8 @@ This directory contains automated CI/CD workflows for the MTEA FSG Infrastructur
 
 ### 1. Build and Publish Docker Image (`docker-build.yml`)
 
+**Security:** Includes Trivy vulnerability scanning on every build
+
 **Triggers:**
 - Push to `main` or `develop` branches (when Dockerfile or docker-compose.yml changes)
 - Pull requests to `main`
@@ -14,12 +16,14 @@ This directory contains automated CI/CD workflows for the MTEA FSG Infrastructur
 **What it does:**
 - Builds the Docker image using buildx for multi-platform support
 - Pushes to GitHub Container Registry (ghcr.io)
+- **Scans image with Trivy** for vulnerabilities (CRITICAL, HIGH, MEDIUM)
+- Uploads scan results to GitHub Security tab
+- Uploads detailed scan reports as artifacts
 - Creates multiple tags:
   - `latest` - Latest main branch build
   - `main-<sha>` - Specific commit on main
   - `develop-<sha>` - Specific commit on develop
   - Branch name tags for tracking
-- Generates build attestations for supply chain security
 - Uses GitHub Actions cache to speed up builds
 
 **Image Location:**
@@ -67,7 +71,45 @@ docker run -it --rm --network host \
 - Check the "Actions" tab in GitHub
 - Download validation artifacts if there are errors
 
-### 3. Cleanup Old Container Images (`cleanup-old-images.yml`)
+### 3. Security Scan with Trivy (`security-scan.yml`)
+
+**Triggers:**
+- Scheduled: Daily at 6am UTC
+- Push to `main` (when Dockerfile changes)
+- Manual trigger via workflow_dispatch
+
+**What it does:**
+- **Container Image Scan:**
+  - Pulls latest image from ghcr.io
+  - Scans for vulnerabilities (ALL severity levels)
+  - Scans for secrets and misconfigurations
+  - Checks both OS and library vulnerabilities
+  - Reports critical and high severity counts
+  
+- **Filesystem Scan:**
+  - Scans repository files
+  - Detects hardcoded secrets
+  - Checks for configuration issues
+  - Validates infrastructure-as-code files
+
+- **Security Integration:**
+  - Uploads results to GitHub Security tab
+  - Creates SARIF reports for code scanning
+  - Stores detailed JSON reports as artifacts
+  - Warns if critical vulnerabilities found
+
+**Viewing Results:**
+1. **Security Tab**: Navigate to repository → Security → Code scanning alerts
+2. **Actions Tab**: View scan summaries in workflow logs
+3. **Artifacts**: Download detailed JSON/SARIF reports
+
+**Severity Levels:**
+- 🔴 **CRITICAL** - Immediate action required
+- 🟠 **HIGH** - Important to fix soon
+- 🟡 **MEDIUM** - Should be reviewed
+- 🔵 **LOW** - Nice to fix (filesystem scan only)
+
+### 4. Cleanup Old Container Images (`cleanup-old-images.yml`)
 
 **Triggers:**
 - Scheduled: Every Sunday at 2am UTC
@@ -156,10 +198,12 @@ docker-compose run --rm packer ./build.sh
 The workflows need these GitHub permissions:
 - `contents: read` - Read repository contents
 - `packages: write` - Push to container registry
-- `attestations: write` - Generate build attestations
-- `id-token: write` - OIDC token for attestations
+- `packages: read` - Pull images for scanning
+- `security-events: write` - Upload security scan results
 
 These are automatically granted in GitHub Actions.
+
+**Note:** Build attestations are disabled as they require GitHub Enterprise or public repositories. They can be re-enabled if the organization upgrades or the repository becomes public.
 
 ## Manual Workflow Triggers
 
@@ -251,20 +295,89 @@ Useful for:
 
 ## Security
 
-- Images are signed with build attestations
-- Supply chain provenance tracked
-- Images scanned for vulnerabilities (add Trivy scan if needed)
-- Only MTEA FSG team members can push images
+- ✅ **Trivy Vulnerability Scanning** - Automatic on every build and daily
+- ✅ **Images built from trusted source** - GitHub Actions only
+- ✅ **Access control** - Only authenticated team members can push
+- ✅ **Audit logs** - Build logs available in Actions tab
+- ✅ **Security alerts** - Integrated with GitHub Security tab
+- ✅ **Secret detection** - Scans for hardcoded credentials
+- ✅ **Configuration checks** - Validates Dockerfile and IaC files
+- 📋 **Consider:** Enable Dependabot for Dockerfile dependency updates
+
+**Security Dashboard:**
+- Navigate to repository → **Security** tab
+- View **Code scanning alerts** for Trivy findings
+- Check **Dependabot alerts** (if enabled)
+- Review **Secret scanning** alerts (if enabled)
+
+## Trivy Scanning Details
+
+### What Trivy Scans For
+
+**Container Images:**
+- OS package vulnerabilities (Ubuntu packages)
+- Application library vulnerabilities (Python, etc.)
+- Known CVEs with severity ratings
+- Exploitability information
+
+**Filesystem:**
+- Hardcoded secrets (passwords, API keys, tokens)
+- Configuration issues in Dockerfile
+- Misconfigurations in IaC files
+- Security best practice violations
+
+### Understanding Scan Results
+
+**In GitHub Security Tab:**
+1. Go to **Security** → **Code scanning**
+2. Filter by tool: "Trivy"
+3. Click on any alert to see:
+   - CVE identifier and description
+   - Severity level
+   - Affected package and version
+   - Fixed version (if available)
+   - Links to vulnerability databases
+
+**In Workflow Logs:**
+- View summary table of findings
+- See vulnerability counts by severity
+- Get warnings for critical issues
+
+**In Artifacts:**
+- Download full JSON report for detailed analysis
+- SARIF format compatible with security tools
+- Historical tracking across builds
+
+### Handling Vulnerabilities
+
+**Critical/High Severity:**
+1. Review the CVE details
+2. Update affected packages in Dockerfile
+3. Rebuild image
+4. Verify fix in next scan
+
+**False Positives:**
+- Can't update package: Document in security policy
+- Already mitigated: Add comment in Dockerfile
+- Not applicable: Dismiss alert in GitHub UI
+
+**Regular Maintenance:**
+- Monitor daily scan results
+- Update base image regularly
+- Keep application dependencies current
+- Review and fix findings promptly
 
 ## Future Enhancements
 
 Potential additions:
-- [ ] Security scanning with Trivy
+- [x] ~~Security scanning with Trivy~~ ✅ **Implemented**
 - [ ] Multi-architecture builds (arm64)
 - [ ] Release tagging workflow
 - [ ] Integration tests in CI
-- [ ] Slack/Teams notifications
+- [ ] Slack/Teams notifications for critical vulnerabilities
 - [ ] Automatic changelog generation
+- [ ] SBOM (Software Bill of Materials) generation
+- [ ] Container signing with Cosign
 
 ---
 
