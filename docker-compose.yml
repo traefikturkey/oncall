@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  packer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mtea-fsg-automation:latest
+    container_name: mtea-fsg-packer
+    volumes:
+      # Mount the entire project directory
+      - .:/workspace
+      # Mount config directory for easy configuration management
+      - ./config:/workspace/config
+      # Mount manifests directory to persist build outputs
+      - ./manifests:/workspace/manifests
+      # Mount SSH keys if needed for build authentication
+      - ~/.ssh:/root/.ssh:ro
+    working_dir: /workspace
+    environment:
+      - PACKER_LOG=${PACKER_LOG:-0}
+      - PACKER_LOG_PATH=${PACKER_LOG_PATH:-/workspace/packer.log}
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+  # Alternative service for running builds non-interactively
+  packer-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mtea-fsg-automation:latest
+    volumes:
+      - .:/workspace
+      - ./config:/workspace/config
+      - ./manifests:/workspace/manifests
+      - ~/.ssh:/root/.ssh:ro
+    working_dir: /workspace
+    environment:
+      - PACKER_LOG=${PACKER_LOG:-0}
+      - PACKER_LOG_PATH=${PACKER_LOG_PATH:-/workspace/packer.log}
+    network_mode: host
+    profiles:
+      - build
