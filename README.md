@@ -465,6 +465,8 @@ All templates include:
 
 Pull the pre-built image from GitHub Container Registry:
 
+> **Note:** GitHub Container Registry requires lowercase image names.
+
 ```bash
 # Pull latest image
 docker pull ghcr.io/eagletg-development/dev-packer:latest

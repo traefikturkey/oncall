@@ -32,6 +32,8 @@ ghcr.io/eagletg-development/dev-packer:latest
 ghcr.io/eagletg-development/dev-packer:main-1a2b3c4
 ```
 
+> **Note:** All image names are lowercase as required by GitHub Container Registry.
+
 **Usage:**
 ```bash
 # Pull latest
