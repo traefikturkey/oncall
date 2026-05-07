@@ -74,9 +74,15 @@ All templates include:
 #### 1. Clone and Initialize
 
 ```bash
+# Linux/macOS/WSL
 git clone <repository-url>
 cd <repository-name>
 ./docker-build.sh setup
+
+# Windows PowerShell
+git clone <repository-url>
+cd <repository-name>
+.\docker-build.ps1 setup
 ```
 
 This builds the Docker image and creates configuration template files in `./config/`.
@@ -125,7 +131,11 @@ vm_vlan_tag         = "100"
 #### 3. Build a Template
 
 ```bash
+# Linux/macOS/WSL
 ./docker-build.sh build
+
+# Windows PowerShell
+.\docker-build.ps1 build
 ```
 
 Select your desired OS from the interactive menu (e.g., option 15 for Ubuntu 24.04 LTS).
@@ -135,7 +145,11 @@ Select your desired OS from the interactive menu (e.g., option 15 for Ubuntu 24.
 Validate all templates before building:
 
 ```bash
+# Linux/macOS/WSL
 ./docker-build.sh validate
+
+# Windows PowerShell
+.\docker-build.ps1 validate
 ```
 
 ---
@@ -427,6 +441,7 @@ All templates include:
 
 ### Quick Commands
 
+**Linux/macOS/WSL:**
 ```bash
 ./docker-build.sh setup      # Initial setup (first time)
 ./docker-build.sh build      # Run interactive build
@@ -434,6 +449,16 @@ All templates include:
 ./docker-build.sh shell      # Open shell in container
 ./docker-build.sh clean      # Remove Docker resources
 ./docker-build.sh rebuild    # Rebuild image from scratch
+```
+
+**Windows PowerShell:**
+```powershell
+.\docker-build.ps1 setup      # Initial setup (first time)
+.\docker-build.ps1 build      # Run interactive build
+.\docker-build.ps1 validate   # Validate all templates
+.\docker-build.ps1 shell      # Open shell in container
+.\docker-build.ps1 clean      # Remove Docker resources
+.\docker-build.ps1 rebuild    # Rebuild image from scratch
 ```
 
 ### Using Docker Compose Directly
