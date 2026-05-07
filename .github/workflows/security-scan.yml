@@ -51,7 +51,8 @@ jobs:
           scanners: 'vuln,secret,config'
 
       - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true  # Requires GHAS for private repos - will show warnings but won't fail
         with:
           sarif_file: 'trivy-results.sarif'
 
@@ -117,7 +118,8 @@ jobs:
           scanners: 'vuln,secret,config,misconfig'
 
       - name: Upload filesystem scan to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true  # Requires GHAS for private repos - will show warnings but won't fail
         with:
           sarif_file: 'trivy-fs-results.sarif'
           category: 'filesystem'

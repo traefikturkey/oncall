@@ -102,9 +102,9 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
 
       - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
-        continue-on-error: true
+        continue-on-error: true  # Requires GHAS for private repos - will show warnings but won't fail
         with:
           sarif_file: 'trivy-results.sarif'
 
