@@ -461,11 +461,34 @@ All templates include:
 .\docker-build.ps1 rebuild    # Rebuild image from scratch
 ```
 
+### Using Pre-Built Docker Image
+
+Pull the pre-built image from GitHub Container Registry:
+
+```bash
+# Pull latest image
+docker pull ghcr.io/eagletg-development/dev-packer:latest
+
+# Or pull a specific version
+docker pull ghcr.io/eagletg-development/dev-packer:main-1a2b3c4
+
+# Run with pre-built image
+docker run -it --rm --network host \
+  -v "$(pwd):/workspace" \
+  -v "$(pwd)/config:/workspace/config" \
+  -v "$(pwd)/manifests:/workspace/manifests" \
+  -v "$HOME/.ssh:/root/.ssh:ro" \
+  ghcr.io/eagletg-development/dev-packer:latest \
+  ./build.sh
+```
+
 ### Using Docker Compose Directly
 
 ```bash
-# Build image
+# Build image locally
 docker-compose build
+
+# Or use pre-built image (edit docker-compose.yml to use ghcr.io image)
 
 # Run interactively
 docker-compose run --rm packer
@@ -538,8 +561,10 @@ docker run -it --rm --network host \
 - ✅ **Consistent Environment** - Same tools/versions across all systems
 - ✅ **Portability** - Works on Windows, macOS, Linux without manual setup
 - ✅ **Isolation** - No pollution of host system
-- ✅ **Easy Updates** - Rebuild image to update tools
+- ✅ **Easy Updates** - Pull latest image or rebuild locally
 - ✅ **Team Collaboration** - Everyone uses identical environment
+- ✅ **Pre-Built Images** - Available from GitHub Container Registry (ghcr.io)
+- ✅ **CI/CD Ready** - Automated builds on every commit
 
 ---
 
