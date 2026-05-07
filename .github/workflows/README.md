@@ -75,6 +75,11 @@ docker run -it --rm --network host \
 
 ### 3. Security Scan with Trivy (`security-scan.yml`)
 
+> ⚠️ **Note for Private Repositories:** The Security tab integration requires GitHub Advanced Security (GHAS), which is a paid feature. However, scan results are still available in:
+> - **Workflow Summary** - Vulnerability counts displayed on workflow run page
+> - **Workflow Logs** - Full table output in the Actions logs
+> - **Artifacts** - Downloadable JSON/SARIF reports for every scan
+
 **Triggers:**
 - Scheduled: Daily at 6am UTC
 - Push to `main` (when Dockerfile changes)
@@ -195,17 +200,52 @@ docker-compose run --rm packer ./build.sh
 | `develop-<sha>` | Specific commit on develop | `develop-x9y8z7w` |
 | `<branch>` | Latest from a specific branch | `main`, `develop` |
 
+## GitHub Advanced Security (GHAS) - Optional
+
+### What Works Without GHAS (Current Setup)
+
+✅ **Full Trivy scanning** - All vulnerabilities detected  
+✅ **Workflow summaries** - Vulnerability counts on every run  
+✅ **Detailed reports** - JSON/SARIF artifacts downloadable  
+✅ **Table output** - Full CVE details in logs  
+✅ **Secret detection** - Filesystem scans work  
+✅ **Daily scans** - Scheduled monitoring active  
+
+### What Requires GHAS (Private Repos Only)
+
+❌ **Security Tab Integration** - Centralized alert dashboard  
+❌ **Persistent Alerts** - Alerts that stay until fixed  
+❌ **Trend Graphs** - Historical vulnerability tracking  
+❌ **Email Notifications** - Automatic alert emails  
+❌ **PR Annotations** - Security comments on pull requests  
+
+### Enabling GHAS Features
+
+**Option 1: Make Repository Public**
+- Free code scanning for public repositories
+- All Security tab features enabled
+- Navigate to: Settings → General → Danger Zone → Change visibility
+
+**Option 2: Purchase GitHub Advanced Security**
+- Contact GitHub Sales for organization plan
+- Enables GHAS for private repositories
+- Includes Dependabot, Secret scanning, Code scanning
+
+**Option 3: Keep Current Setup (Recommended)**
+- You're already getting full vulnerability scanning
+- View results in Workflow Summary and Artifacts
+- Works perfectly for team visibility
+- No additional cost
+
 ## Permissions Required
 
 The workflows need these GitHub permissions:
 - `contents: read` - Read repository contents
 - `packages: write` - Push to container registry
 - `packages: read` - Pull images for scanning
-- `security-events: write` - Upload security scan results
+- `security-events: write` - Upload security scan results (attempts, but gracefully fails without GHAS)
 
 These are automatically granted in GitHub Actions.
-
-**Note:** Build attestations are disabled as they require GitHub Enterprise or public repositories. They can be re-enabled if the organization upgrades or the repository becomes public.
 
 ## Manual Workflow Triggers
 
