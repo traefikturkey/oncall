@@ -39,6 +39,9 @@ RUN add-apt-repository --yes --update ppa:ansible/ansible && \
     ansible-core \
     && ansible-galaxy collection install ansible.posix community.general
 
+# Update pip, setuptools, and wheel to latest versions (security)
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
 # Cleanup
 RUN apt-get autoremove -y && \
     apt-get clean && \
