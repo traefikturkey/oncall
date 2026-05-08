@@ -197,6 +197,14 @@ source "proxmox-iso" "ubuntu" {
 build {
   sources = ["source.proxmox-iso.ubuntu"]
 
+  provisioner "shell" {
+    inline = [
+      "echo 'Waiting for cloud-init to complete...'",
+      "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
+      "echo 'Cloud-init completed successfully'"
+    ]
+  }
+
   provisioner "ansible" {
     user                   = var.build_username
     galaxy_file            = "${path.cwd}/ansible/linux-requirements.yml"
