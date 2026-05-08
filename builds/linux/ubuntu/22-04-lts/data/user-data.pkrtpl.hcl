@@ -29,3 +29,5 @@ ${network}
     - echo 'network: {config: disabled}' > /target/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
     - echo 'datasource_list: [ NoCloud, None ]' > /target/etc/cloud/cloud.cfg.d/90_dpkg.cfg
     - curtin in-target --target=/target -- systemctl enable qemu-guest-agent
+    - echo 'send dhcp-client-identifier = hardware;' > /target/etc/dhcp/dhclient.conf
+    - curtin in-target --target=/target -- touch /etc/cloud/cloud-init.disabled
