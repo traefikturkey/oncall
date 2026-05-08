@@ -458,10 +458,10 @@ All templates include:
 winget install --id GitHub.cli
 
 # Recommended: Use docker-run.ps1 (handles Windows networking automatically)
-.\docker-run.ps1              # Interactive shell (auto-configures networking)
-.\docker-run.ps1 -Build       # Run build.sh directly
-.\docker-run.ps1 -Build -Debug # Run with Packer debug logging enabled
-.\docker-run.ps1 -Validate    # Run validate.sh directly
+.\docker-run.ps1                    # Interactive shell (auto-configures networking)
+.\docker-run.ps1 -Build             # Run build.sh directly
+.\docker-run.ps1 -Build -PackerDebug # Run with Packer debug logging enabled
+.\docker-run.ps1 -Validate          # Run validate.sh directly
 
 # Alternative: Traditional docker-build.ps1 commands
 .\docker-build.ps1 setup      # Initial setup (first time)

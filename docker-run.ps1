@@ -17,7 +17,7 @@
 .EXAMPLE
     .\docker-run.ps1
     .\docker-run.ps1 -Build
-    .\docker-run.ps1 -Build -Debug
+    .\docker-run.ps1 -Build -PackerDebug
     .\docker-run.ps1 -Validate
 #>
 
@@ -33,7 +33,7 @@ param(
     [switch]$Validate,
 
     [Parameter()]
-    [switch]$Debug
+    [switch]$PackerDebug
 )
 
 # Set strict mode
@@ -217,14 +217,14 @@ $dockerArgs = @(
 )
 
 # Add Packer debug logging if requested
-if ($Debug) {
+if ($PackerDebug) {
     $dockerArgs += "-e"
     $dockerArgs += "PACKER_LOG=1"
     $dockerArgs += "-e"
     $dockerArgs += "PACKER_LOG_PATH=/workspace/packer-debug.log"
     Write-Host "  Debug Logging: ENABLED (packer-debug.log)" -ForegroundColor Cyan
 } else {
-    Write-Host "  Debug Logging: DISABLED (use -Debug to enable)" -ForegroundColor Gray
+    Write-Host "  Debug Logging: DISABLED (use -PackerDebug to enable)" -ForegroundColor Gray
 }
 
 $dockerArgs += $imageName
