@@ -291,5 +291,26 @@ if ($PackerDebug) {
 $dockerArgs += $imageName
 $dockerArgs += $containerCommand
 
-# Execute
+# Execute and capture exit code
 & docker $dockerArgs
+$dockerExitCode = $LASTEXITCODE
+
+# Handle exit
+Write-Host ""
+Write-Host "=====================================================================" -ForegroundColor Cyan
+
+if ($dockerExitCode -eq 0) {
+    Write-Host "  ✓ Container exited successfully" -ForegroundColor Green
+} elseif ($dockerExitCode -eq 130) {
+    Write-Host "  ℹ Build cancelled by user (Ctrl+C)" -ForegroundColor Yellow
+} elseif ($dockerExitCode -eq 137) {
+    Write-Host "  ⚠ Container killed (possibly out of memory)" -ForegroundColor Yellow
+} else {
+    Write-Host "  ✗ Container exited with code: $dockerExitCode" -ForegroundColor Red
+}
+
+Write-Host "=====================================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Exit with same code as container
+exit $dockerExitCode
