@@ -66,24 +66,20 @@ All templates include:
 ### Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+- **Linux host required** - Docker Desktop on Windows has networking limitations that prevent Packer HTTP server connectivity
 - Access to MTEA FSG Proxmox infrastructure (v8.0+)
 - Proxmox API token with appropriate permissions
-- **Windows users:** [GitHub CLI](https://cli.github.com/) - Install with `winget install --id GitHub.cli`
+- [GitHub CLI](https://cli.github.com/) for pulling pre-built images
 
 ### 3-Step Setup
 
 #### 1. Clone and Initialize
 
 ```bash
-# Linux/macOS/WSL
-git clone <repository-url>
-cd <repository-name>
+# Linux (required for Docker networking)
+git clone --recurse-submodules https://github.com/EagleTG-Development/dev-packer.git
+cd dev-packer
 ./docker-build.sh setup
-
-# Windows PowerShell
-git clone <repository-url>
-cd <repository-name>
-.\docker-build.ps1 setup
 ```
 
 This builds the Docker image and creates configuration template files in `./config/`.
@@ -440,9 +436,10 @@ All templates include:
 
 ## Docker Usage
 
-### Quick Commands
+> **Important:** Docker containerized builds require a **Linux host**. Docker Desktop on Windows/macOS has networking limitations that prevent the Packer HTTP server from being accessible to Proxmox VMs during autoinstall. For Windows users, install Packer and Ansible directly on the host instead of using Docker.
 
-**Linux/macOS/WSL:**
+### Quick Commands (Linux Only)
+
 ```bash
 ./docker-build.sh setup      # Initial setup (first time)
 ./docker-build.sh build      # Run interactive build
@@ -452,33 +449,9 @@ All templates include:
 ./docker-build.sh rebuild    # Rebuild image from scratch
 ```
 
-**Windows PowerShell:**
-```powershell
-# Install GitHub CLI first (if not already installed)
-winget install --id GitHub.cli
-
-# Recommended: Use docker-run.ps1 (handles Windows networking automatically)
-.\docker-run.ps1                    # Run build.sh automatically (default)
-.\docker-run.ps1 -PackerDebug       # Run build.sh with debug logging
-.\docker-run.ps1 -Shell             # Interactive shell only
-.\docker-run.ps1 -Validate          # Run validate.sh instead
-
-# Alternative: Traditional docker-build.ps1 commands
-.\docker-build.ps1 setup      # Initial setup (first time)
-.\docker-build.ps1 build      # Run interactive build
-.\docker-build.ps1 validate   # Validate all templates
-.\docker-build.ps1 shell      # Open shell in container
-.\docker-build.ps1 clean      # Remove Docker resources
-.\docker-build.ps1 rebuild    # Rebuild image from scratch
-```
-
-> **Windows Users:** The `docker-run.ps1` script automatically handles Docker Desktop networking issues by detecting your host IP and configuring Packer's HTTP server to be accessible from Proxmox VMs.
-
-### Using Pre-Built Docker Image
+### Using Pre-Built Docker Image (Linux Only)
 
 Pull the pre-built image from GitHub Container Registry:
-
-> **Note:** GitHub Container Registry requires lowercase image names.
 
 **First-time setup - Authenticate with GitHub:**
 
@@ -499,25 +472,13 @@ docker pull ghcr.io/eagletg-development/dev-packer:latest
 # Or pull a specific version
 docker pull ghcr.io/eagletg-development/dev-packer:main-1a2b3c4
 
-# Run with pre-built image (Linux/macOS/WSL)
+# Run with pre-built image
 docker run -it --rm --network host \
   -v "$(pwd):/workspace" \
   -v "$(pwd)/config:/workspace/config" \
   -v "$(pwd)/manifests:/workspace/manifests" \
   -v "$HOME/.ssh:/root/.ssh:ro" \
   ghcr.io/eagletg-development/dev-packer:latest \
-  ./build.sh
-```
-
-**Windows PowerShell:**
-
-```powershell
-# Run with pre-built image
-docker run -it --rm --network host `
-  -v "${PWD}:/workspace" `
-  -v "${PWD}/config:/workspace/config" `
-  -v "${PWD}/manifests:/workspace/manifests" `
-  ghcr.io/eagletg-development/dev-packer:latest `
   ./build.sh
 ```
 
@@ -704,26 +665,14 @@ variable "timeout" {
 **Problem**: Can't reach Proxmox or HTTP server timeouts
 
 **Solution**:
-1. Verify `vm_bridge_interface` exists: `pvesh get /nodes/<node>/network`
-2. Check VLAN tag matches network config
-3. Ensure firewall allows ports 8000-8099
-4. Test: `curl http://<packer-host>:8000/`
+1. Ensure you're running on a **Linux host** (not Docker Desktop on Windows/macOS)
+2. Verify `vm_bridge_interface` exists: `pvesh get /nodes/<node>/network`
+3. Check VLAN tag matches network config
+4. Ensure firewall allows ports 8000-8099
+5. Verify `--network host` is used (default in docker-compose.yml)
+6. Test: `curl http://<packer-host>:8000/`
 
-**Windows-Specific**: Docker Desktop networking doesn't support `--network host` like Linux does. Use `docker-run.ps1` which automatically:
-- Detects your Windows host IP that Proxmox can reach
-- Configures `PACKER_HTTP_ADDR` environment variable
-- Maps ports 8000-8099 properly
-
-Symptoms of this issue:
-- VM gets 192.168.65.x IP in boot logs (Docker internal network)
-- HTTP timeouts during autoinstall
-- `cloud-init` hangs for 10+ minutes
-
-Solution:
-```powershell
-# Use the dedicated Windows launcher script
-.\docker-run.ps1 -Build
-```
+**Note**: Docker Desktop on Windows/macOS has network isolation that prevents `--network host` from working properly. For these platforms, install Packer and Ansible directly on the host.
 
 ### SSH Connection Failures
 
