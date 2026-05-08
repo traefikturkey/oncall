@@ -457,6 +457,12 @@ All templates include:
 # Install GitHub CLI first (if not already installed)
 winget install --id GitHub.cli
 
+# Recommended: Use docker-run.ps1 (handles Windows networking automatically)
+.\docker-run.ps1              # Interactive shell (auto-configures networking)
+.\docker-run.ps1 -Build       # Run build.sh directly
+.\docker-run.ps1 -Validate    # Run validate.sh directly
+
+# Alternative: Traditional docker-build.ps1 commands
 .\docker-build.ps1 setup      # Initial setup (first time)
 .\docker-build.ps1 build      # Run interactive build
 .\docker-build.ps1 validate   # Validate all templates
@@ -464,6 +470,8 @@ winget install --id GitHub.cli
 .\docker-build.ps1 clean      # Remove Docker resources
 .\docker-build.ps1 rebuild    # Rebuild image from scratch
 ```
+
+> **Windows Users:** The `docker-run.ps1` script automatically handles Docker Desktop networking issues by detecting your host IP and configuring Packer's HTTP server to be accessible from Proxmox VMs.
 
 ### Using Pre-Built Docker Image
 
@@ -699,7 +707,22 @@ variable "timeout" {
 2. Check VLAN tag matches network config
 3. Ensure firewall allows ports 8000-8099
 4. Test: `curl http://<packer-host>:8000/`
-5. For Docker: Verify `network_mode: host` in docker-compose.yml
+
+**Windows-Specific**: Docker Desktop networking doesn't support `--network host` like Linux does. Use `docker-run.ps1` which automatically:
+- Detects your Windows host IP that Proxmox can reach
+- Configures `PACKER_HTTP_ADDR` environment variable
+- Maps ports 8000-8099 properly
+
+Symptoms of this issue:
+- VM gets 192.168.65.x IP in boot logs (Docker internal network)
+- HTTP timeouts during autoinstall
+- `cloud-init` hangs for 10+ minutes
+
+Solution:
+```powershell
+# Use the dedicated Windows launcher script
+.\docker-run.ps1 -Build
+```
 
 ### SSH Connection Failures
 
