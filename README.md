@@ -68,6 +68,7 @@ All templates include:
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
 - Access to MTEA FSG Proxmox infrastructure (v8.0+)
 - Proxmox API token with appropriate permissions
+- **Windows users:** [GitHub CLI](https://cli.github.com/) - Install with `winget install --id GitHub.cli`
 
 ### 3-Step Setup
 
@@ -453,6 +454,9 @@ All templates include:
 
 **Windows PowerShell:**
 ```powershell
+# Install GitHub CLI first (if not already installed)
+winget install --id GitHub.cli
+
 .\docker-build.ps1 setup      # Initial setup (first time)
 .\docker-build.ps1 build      # Run interactive build
 .\docker-build.ps1 validate   # Validate all templates
@@ -467,6 +471,18 @@ Pull the pre-built image from GitHub Container Registry:
 
 > **Note:** GitHub Container Registry requires lowercase image names.
 
+**First-time setup - Authenticate with GitHub:**
+
+```bash
+# Add read:packages scope to your GitHub token
+gh auth refresh -s read:packages
+
+# Login to GitHub Container Registry
+gh auth token | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+```
+
+**Pull and run the image:**
+
 ```bash
 # Pull latest image
 docker pull ghcr.io/eagletg-development/dev-packer:latest
@@ -474,13 +490,25 @@ docker pull ghcr.io/eagletg-development/dev-packer:latest
 # Or pull a specific version
 docker pull ghcr.io/eagletg-development/dev-packer:main-1a2b3c4
 
-# Run with pre-built image
+# Run with pre-built image (Linux/macOS/WSL)
 docker run -it --rm --network host \
   -v "$(pwd):/workspace" \
   -v "$(pwd)/config:/workspace/config" \
   -v "$(pwd)/manifests:/workspace/manifests" \
   -v "$HOME/.ssh:/root/.ssh:ro" \
   ghcr.io/eagletg-development/dev-packer:latest \
+  ./build.sh
+```
+
+**Windows PowerShell:**
+
+```powershell
+# Run with pre-built image
+docker run -it --rm --network host `
+  -v "${PWD}:/workspace" `
+  -v "${PWD}/config:/workspace/config" `
+  -v "${PWD}/manifests:/workspace/manifests" `
+  ghcr.io/eagletg-development/dev-packer:latest `
   ./build.sh
 ```
 

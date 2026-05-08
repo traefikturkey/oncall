@@ -1,0 +1,20 @@
+# Ensure shell scripts always use LF (Unix) line endings
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Ensure Windows scripts use CRLF
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Auto-detect text files
+* text=auto
+
+# Treat these as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.iso binary
