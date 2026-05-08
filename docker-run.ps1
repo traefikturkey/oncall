@@ -96,29 +96,29 @@ $allIPAddresses = Get-NetIPAddress -AddressFamily IPv4 |
     Select-Object IPAddress, InterfaceAlias, PrefixLength
 
 # Prioritize physical Ethernet adapters over virtual ones
-$physicalAdapters = $allIPAddresses | Where-Object {
+$physicalAdapters = @($allIPAddresses | Where-Object {
     $_.InterfaceAlias -like "Ethernet*" -and
     $_.InterfaceAlias -notlike "vEthernet*"
-}
+})
 
-$virtualAdapters = $allIPAddresses | Where-Object {
+$virtualAdapters = @($allIPAddresses | Where-Object {
     $_.InterfaceAlias -like "vEthernet*" -or
     $_.InterfaceAlias -like "*WSL*" -or
     $_.InterfaceAlias -like "*Default Switch*"
-}
+})
 
-$otherAdapters = $allIPAddresses | Where-Object {
+$otherAdapters = @($allIPAddresses | Where-Object {
     $_.InterfaceAlias -notlike "Ethernet*" -and
     $_.InterfaceAlias -notlike "vEthernet*" -and
     $_.InterfaceAlias -notlike "*WSL*" -and
     $_.InterfaceAlias -notlike "*Default Switch*"
-}
+})
 
 # Build priority list: Physical Ethernet > Other adapters > Virtual adapters
 $ipAddresses = @()
-$ipAddresses += $physicalAdapters
-$ipAddresses += $otherAdapters
-$ipAddresses += $virtualAdapters
+if ($physicalAdapters.Count -gt 0) { $ipAddresses += $physicalAdapters }
+if ($otherAdapters.Count -gt 0) { $ipAddresses += $otherAdapters }
+if ($virtualAdapters.Count -gt 0) { $ipAddresses += $virtualAdapters }
 
 if ($ipAddresses.Count -eq 0) {
     Write-Host "  ✗ No suitable network interface found" -ForegroundColor Red
@@ -134,8 +134,12 @@ if ($ipAddresses.Count -eq 0) {
     $selectedIP = $physicalAdapters[0].IPAddress
     $selectedInterface = $physicalAdapters[0].InterfaceAlias
     Write-Host "  ✓ Auto-selected physical Ethernet: $selectedIP ($selectedInterface)" -ForegroundColor Green
-    if ($virtualAdapters.Count -gt 0) {
-        Write-Host "  ℹ Skipped $($virtualAdapters.Count + $otherAdapters.Count) virtual/other adapter(s)" -ForegroundColor Gray
+
+    $otherCount = if ($virtualAdapters) { $virtualAdapters.Count } else { 0 }
+    $otherCount += if ($otherAdapters) { $otherAdapters.Count } else { 0 }
+
+    if ($otherCount -gt 0) {
+        Write-Host "  ℹ Skipped $otherCount virtual/other adapter(s)" -ForegroundColor Gray
     }
 } else {
     Write-Host "  Multiple network interfaces detected:" -ForegroundColor Cyan
