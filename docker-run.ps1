@@ -8,17 +8,18 @@
     - Detects the correct host IP for Proxmox connectivity
     - Configures HTTP bind address for Packer
     - Launches container with appropriate port mappings
+    - Defaults to running build.sh automatically
 .PARAMETER Shell
-    Launch interactive shell (default)
-.PARAMETER Build
-    Launch build.sh directly
+    Launch interactive shell instead of build.sh
 .PARAMETER Validate
-    Launch validate.sh directly
+    Launch validate.sh instead of build.sh
+.PARAMETER PackerDebug
+    Enable Packer debug logging (PACKER_LOG=1)
 .EXAMPLE
-    .\docker-run.ps1
-    .\docker-run.ps1 -Build
-    .\docker-run.ps1 -Build -PackerDebug
-    .\docker-run.ps1 -Validate
+    .\docker-run.ps1                # Runs build.sh automatically (default)
+    .\docker-run.ps1 -PackerDebug   # Runs build.sh with debug logging
+    .\docker-run.ps1 -Shell         # Opens interactive bash shell
+    .\docker-run.ps1 -Validate      # Runs validate.sh instead
 #>
 
 [CmdletBinding()]
@@ -84,7 +85,8 @@ Write-Host ""
 # Step 2: Detect Windows IP for Proxmox connectivity
 Write-Host "[2/5] Detecting Windows host IP for Proxmox connectivity..." -ForegroundColor Yellow
 
-$ipAddresses = Get-NetIPAddress -AddressFamily IPv4 |
+# Get all IPv4 addresses, excluding loopback, link-local, and Docker internal
+$allIPAddresses = Get-NetIPAddress -AddressFamily IPv4 |
     Where-Object {
         $_.IPAddress -notlike "127.*" -and
         $_.IPAddress -notlike "169.254.*" -and
@@ -92,6 +94,31 @@ $ipAddresses = Get-NetIPAddress -AddressFamily IPv4 |
         $_.PrefixOrigin -ne "WellKnown"
     } |
     Select-Object IPAddress, InterfaceAlias, PrefixLength
+
+# Prioritize physical Ethernet adapters over virtual ones
+$physicalAdapters = $allIPAddresses | Where-Object {
+    $_.InterfaceAlias -like "Ethernet*" -and
+    $_.InterfaceAlias -notlike "vEthernet*"
+}
+
+$virtualAdapters = $allIPAddresses | Where-Object {
+    $_.InterfaceAlias -like "vEthernet*" -or
+    $_.InterfaceAlias -like "*WSL*" -or
+    $_.InterfaceAlias -like "*Default Switch*"
+}
+
+$otherAdapters = $allIPAddresses | Where-Object {
+    $_.InterfaceAlias -notlike "Ethernet*" -and
+    $_.InterfaceAlias -notlike "vEthernet*" -and
+    $_.InterfaceAlias -notlike "*WSL*" -and
+    $_.InterfaceAlias -notlike "*Default Switch*"
+}
+
+# Build priority list: Physical Ethernet > Other adapters > Virtual adapters
+$ipAddresses = @()
+$ipAddresses += $physicalAdapters
+$ipAddresses += $otherAdapters
+$ipAddresses += $virtualAdapters
 
 if ($ipAddresses.Count -eq 0) {
     Write-Host "  ✗ No suitable network interface found" -ForegroundColor Red
@@ -102,16 +129,46 @@ if ($ipAddresses.Count -eq 0) {
     $selectedIP = $ipAddresses[0].IPAddress
     $selectedInterface = $ipAddresses[0].InterfaceAlias
     Write-Host "  ✓ Detected IP: $selectedIP ($selectedInterface)" -ForegroundColor Green
+} elseif ($physicalAdapters.Count -eq 1) {
+    # Auto-select if only one physical Ethernet adapter
+    $selectedIP = $physicalAdapters[0].IPAddress
+    $selectedInterface = $physicalAdapters[0].InterfaceAlias
+    Write-Host "  ✓ Auto-selected physical Ethernet: $selectedIP ($selectedInterface)" -ForegroundColor Green
+    if ($virtualAdapters.Count -gt 0) {
+        Write-Host "  ℹ Skipped $($virtualAdapters.Count + $otherAdapters.Count) virtual/other adapter(s)" -ForegroundColor Gray
+    }
 } else {
     Write-Host "  Multiple network interfaces detected:" -ForegroundColor Cyan
     Write-Host ""
-    for ($i = 0; $i -lt $ipAddresses.Count; $i++) {
-        $ip = $ipAddresses[$i]
-        Write-Host "    [$($i+1)] $($ip.IPAddress) - $($ip.InterfaceAlias)" -ForegroundColor White
-    }
-    Write-Host ""
 
-    $selection = Read-Host "  Select interface number [1-$($ipAddresses.Count)]"
+    # Show physical adapters first (highlighted)
+    for ($i = 0; $i -lt $physicalAdapters.Count; $i++) {
+        $ip = $physicalAdapters[$i]
+        Write-Host "    [$($i+1)] $($ip.IPAddress) - $($ip.InterfaceAlias) [Physical Ethernet]" -ForegroundColor Green
+    }
+
+    # Then other adapters
+    $offset = $physicalAdapters.Count
+    for ($i = 0; $i -lt $otherAdapters.Count; $i++) {
+        $ip = $otherAdapters[$i]
+        Write-Host "    [$($offset+$i+1)] $($ip.IPAddress) - $($ip.InterfaceAlias)" -ForegroundColor White
+    }
+
+    # Finally virtual adapters (dimmed)
+    $offset = $physicalAdapters.Count + $otherAdapters.Count
+    for ($i = 0; $i -lt $virtualAdapters.Count; $i++) {
+        $ip = $virtualAdapters[$i]
+        Write-Host "    [$($offset+$i+1)] $($ip.IPAddress) - $($ip.InterfaceAlias) [Virtual]" -ForegroundColor DarkGray
+    }
+
+    Write-Host ""
+    $defaultChoice = if ($physicalAdapters.Count -gt 0) { "1" } else { "1" }
+    $selection = Read-Host "  Select interface number [1-$($ipAddresses.Count)] (default: $defaultChoice)"
+
+    if ([string]::IsNullOrWhiteSpace($selection)) {
+        $selection = $defaultChoice
+    }
+
     $index = [int]$selection - 1
 
     if ($index -lt 0 -or $index -ge $ipAddresses.Count) {
@@ -189,15 +246,16 @@ Write-Host "  Port Mapping: $httpPorts -> $httpPorts" -ForegroundColor Cyan
 Write-Host ""
 
 # Determine command to run
-$containerCommand = "/bin/bash"
-if ($Build) {
-    $containerCommand = "./build.sh"
-    Write-Host "  Mode: Build" -ForegroundColor Cyan
+if ($Shell) {
+    $containerCommand = "/bin/bash"
+    Write-Host "  Mode: Interactive Shell" -ForegroundColor Cyan
 } elseif ($Validate) {
     $containerCommand = "./validate.sh"
     Write-Host "  Mode: Validate" -ForegroundColor Cyan
 } else {
-    Write-Host "  Mode: Interactive Shell" -ForegroundColor Cyan
+    # Default to running build.sh
+    $containerCommand = "./build.sh"
+    Write-Host "  Mode: Build (default)" -ForegroundColor Cyan
 }
 
 Write-Host ""
@@ -227,10 +285,7 @@ if ($PackerDebug) {
 }
 
 $dockerArgs += $imageName
-
-if ($containerCommand -ne "/bin/bash") {
-    $dockerArgs += $containerCommand
-}
+$dockerArgs += $containerCommand
 
 # Execute
 & docker $dockerArgs
