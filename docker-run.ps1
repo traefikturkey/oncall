@@ -220,9 +220,8 @@ $dockerArgs = @(
 if ($PackerDebug) {
     $dockerArgs += "-e"
     $dockerArgs += "PACKER_LOG=1"
-    $dockerArgs += "-e"
-    $dockerArgs += "PACKER_LOG_PATH=/workspace/packer-debug.log"
-    Write-Host "  Debug Logging: ENABLED (packer-debug.log)" -ForegroundColor Cyan
+    Write-Host "  Debug Logging: ENABLED (output to console)" -ForegroundColor Cyan
+    Write-Host "  Tip: Redirect to file with: | Tee-Object packer-debug.log" -ForegroundColor Gray
 } else {
     Write-Host "  Debug Logging: DISABLED (use -PackerDebug to enable)" -ForegroundColor Gray
 }
