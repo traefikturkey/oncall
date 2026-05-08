@@ -52,7 +52,7 @@ fi
 PACKER_HTTP_VAR=""
 if [ -n "$PACKER_HTTP_ADDR" ]; then
   echo "Using PACKER_HTTP_ADDR: $PACKER_HTTP_ADDR"
-  PACKER_HTTP_VAR="-var common_http_bind_address=$PACKER_HTTP_ADDR"
+  PACKER_HTTP_VAR="-var \"common_http_bind_address=$PACKER_HTTP_ADDR\""
 fi
 
 menu_option_1() {
@@ -78,7 +78,7 @@ menu_option_1() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -115,7 +115,7 @@ menu_option_2() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -152,7 +152,7 @@ menu_option_3() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -189,7 +189,7 @@ menu_option_4() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -226,7 +226,7 @@ menu_option_5() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -263,7 +263,7 @@ menu_option_6() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -300,7 +300,7 @@ menu_option_7() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -337,7 +337,7 @@ menu_option_8() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -374,7 +374,7 @@ menu_option_9() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -411,7 +411,7 @@ menu_option_10() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -448,7 +448,7 @@ menu_option_11() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -485,7 +485,7 @@ menu_option_12() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -522,7 +522,7 @@ menu_option_13() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -559,7 +559,7 @@ menu_option_14() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -596,7 +596,7 @@ menu_option_15() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -633,7 +633,7 @@ menu_option_16() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -670,7 +670,7 @@ menu_option_17() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -707,7 +707,7 @@ menu_option_18() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
@@ -743,7 +743,7 @@ menu_option_19() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       --only proxmox-iso.windows-desktop-ent \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
@@ -780,7 +780,7 @@ menu_option_20() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       --only proxmox-iso.windows-desktop-pro \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
@@ -817,7 +817,7 @@ menu_option_21() {
   ### Start the Build. ###
   echo "Starting the build...."
   echo "packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR"
-  packer build -force -on-error=ask $debug_option "$PACKER_HTTP_VAR" \
+  eval packer build -force -on-error=ask $debug_option $PACKER_HTTP_VAR \
       -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
       -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
