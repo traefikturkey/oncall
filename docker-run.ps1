@@ -243,10 +243,10 @@ Write-Host ""
 Write-Host "[5/5] Launching container..." -ForegroundColor Yellow
 
 $httpPorts = "8000-8099"
-$packerHttpAddr = "${selectedIP}:8000"
+$packerHttpAddr = "${selectedIP}"
 
 Write-Host "  HTTP Bind Address: $packerHttpAddr" -ForegroundColor Cyan
-Write-Host "  Port Mapping: $httpPorts -> $httpPorts" -ForegroundColor Cyan
+Write-Host "  Port Range: $httpPorts" -ForegroundColor Cyan
 Write-Host ""
 
 # Determine command to run
