@@ -43,6 +43,7 @@ This repository provides infrastructure-as-code tooling for automating the creat
 | AlmaLinux        | 10, 9, 8  | ✓              | ✓         | ✓    | ✓    | random|
 | CentOS Stream    | 10, 9     | ✓              | ✓         | ✓    | ✓    | 10013-14|
 | Debian           | 12, 11    | ✓              | ✓         | ✓    | ✓    | 10011-12|
+| NixOS            | 25.11     | ✓              | ✓         | ✓    | ✓    | 10016|
 | OpenSUSE Leap    | 15.6, 15.5| ✓              | ✓         | ✓    | ✓    | 10009-10|
 | Oracle Linux     | 9, 8      | ✓              | ✓         | ✓    | ✓    | 10007-08|
 | Rocky Linux      | 10, 9, 8  | ✓              | ✓         | ✓    | ✓    | 10004-06|
@@ -409,6 +410,7 @@ Select from the menu:
 - Options 1-14: Various Linux distributions
 - Option 15: Ubuntu 24.04 LTS
 - Option 21: Ubuntu 26.04 LTS
+- Option 22: NixOS 25.11
 - Options 18-20: Windows 11
 
 ### Debug Mode
