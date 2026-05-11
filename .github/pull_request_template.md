@@ -1,6 +1,6 @@
 <!--
 
-In order to have a good experience with our community, we recommend that you read the [contributing guidelines](https://github.com/ajschroeder/proxmox-packer-examples/blob/main/.github/CONTRIBUTING.md) for making a pull request.
+In order to have a good experience with our community, we recommend that you read the [contributing guidelines](https://github.com/traefikturkey/oncall/blob/main/.github/CONTRIBUTING.md) for making a pull request.
 
 -->
 

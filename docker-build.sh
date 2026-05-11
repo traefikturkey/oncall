@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 print_header() {
     echo -e "${BLUE}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║    MTEA FSG - Infrastructure Automation Build Helper      ║"
+    echo "║       Packer Proxmox - Build Helper for VM Templates      ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
@@ -137,7 +137,7 @@ clean() {
     if [[ "$response" =~ ^[Yy]$ ]]; then
         echo -e "${BLUE}Cleaning up...${NC}"
         docker-compose down -v
-        docker rmi mtea-fsg-automation:latest 2>/dev/null || true
+        docker rmi packer-proxmox:latest 2>/dev/null || true
         echo -e "${GREEN}Cleanup complete${NC}"
     else
         echo "Cancelled"
