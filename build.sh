@@ -48,7 +48,8 @@ if [ "$debug_mode" = true ]; then
   menu_message+=" \e[31m(Debug Mode)\e[0m"
 fi
 
-# Check for PACKER_HTTP_ADDR environment variable (set by docker-run.ps1)
+# Check for PACKER_HTTP_ADDR environment variable (optional)
+# Can be set to bind Packer HTTP server to a specific IP address
 PACKER_HTTP_VAR=""
 if [ -n "$PACKER_HTTP_ADDR" ]; then
   echo "Using PACKER_HTTP_ADDR: $PACKER_HTTP_ADDR"

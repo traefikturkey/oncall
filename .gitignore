@@ -6,8 +6,8 @@ ansible/roles/geerlingguy.docker
 **/credentials*
 
 # Configurations
-# config/ is now a git submodule (not ignored)
-# Ignore alternate config directories for testing
+# Ignore default config directory.
+config/
 config_*/
 
 # ignore temp directory
@@ -48,3 +48,4 @@ plugin.pwi
 
 # Local QEMU test SSH keys
 tests/ubuntu-qemu/test_ssh_key
+.specstory/
