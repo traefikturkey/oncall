@@ -214,11 +214,12 @@ oncall/
 
 ### Configuration Scripts
 
-Generate configuration templates:
+Configuration templates are automatically created when you run `./docker-build.sh setup`.
+
+**Optional: Create additional config directories for multiple environments:**
 
 ```bash
-./config.sh              # Creates ./config/ directory
-./config.sh dev          # Creates ./dev/ directory (for multiple environments)
+./config.sh dev          # Creates ./dev/ directory
 ./config.sh prod         # Creates ./prod/ directory
 ```
 
