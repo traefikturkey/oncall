@@ -44,8 +44,12 @@ plugin.hwm
 plugin.pwd
 plugin.pwi
 
+.gitmodules
+
 *.log
 
 # Local QEMU test SSH keys
 tests/ubuntu-qemu/test_ssh_key
+
+# SpecStory
 .specstory/
