@@ -24,4 +24,5 @@
         "editor.formatOnType": true,
         "editor.trimAutoWhitespace": true
     },
+    "specstory.cloudSync.enabled": "never",
 }

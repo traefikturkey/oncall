@@ -1,8 +1,6 @@
-# MTEA FSG Infrastructure Automation
+# Packer Templates for Proxmox
 
-**Modoc Tribal Enterprise Authority (MTEA)**  
-**Federal Services Group (FSG)**  
-Network Automation & Infrastructure-as-Code
+Automated VM template creation for Proxmox using HashiCorp Packer and Ansible.
 
 ---
 
@@ -17,14 +15,13 @@ Network Automation & Infrastructure-as-Code
 - [Docker Usage](#docker-usage)
 - [Advanced Configuration](#advanced-configuration)
 - [Troubleshooting](#troubleshooting)
-- [CI/CD Integration](#cicd-integration)
 - [Credits](#credits)
 
 ---
 
 ## Introduction
 
-This repository provides MTEA FSG's infrastructure-as-code tooling for automating the creation of virtual machine templates on Proxmox. Built with [HashiCorp Packer](https://www.packer.io) and [Ansible](https://www.ansible.com), these tools enable consistent, repeatable deployment of standardized VM images across the MTEA FSG network infrastructure.
+This repository provides infrastructure-as-code tooling for automating the creation of virtual machine templates on Proxmox. Built with [HashiCorp Packer](https://www.packer.io) and [Ansible](https://www.ansible.com), these tools enable consistent, repeatable deployment of standardized VM images.
 
 ### Key Features
 
@@ -67,9 +64,8 @@ All templates include:
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
 - **Linux host required** - Docker Desktop on Windows has networking limitations that prevent Packer HTTP server connectivity
-- Access to MTEA FSG Proxmox infrastructure (v8.0+)
+- Access to Proxmox infrastructure (v8.0+)
 - Proxmox API token with appropriate permissions
-- [GitHub CLI](https://cli.github.com/) for pulling pre-built images
 
 ### 3-Step Setup
 
@@ -77,14 +73,14 @@ All templates include:
 
 ```bash
 # Linux (required for Docker networking)
-git clone --recurse-submodules https://github.com/EagleTG-Development/dev-packer.git
-cd dev-packer
+git clone https://github.com/traefikturkey/oncall.git
+cd oncall
 ./docker-build.sh setup
 ```
 
 This builds the Docker image and creates configuration template files in `./config/`.
 
-#### 2. Configure for MTEA FSG
+#### 2. Configure for Your Environment
 
 Edit configuration files in the `config/` directory:
 
@@ -93,7 +89,7 @@ Edit configuration files in the `config/` directory:
 - **`proxmox.pkrvars.hcl`** - Proxmox API credentials and node
 - **`build.pkrvars.hcl`** - VM build user credentials  
 - **`ansible.pkrvars.hcl`** - Ansible automation user
-- **`network.pkrvars.hcl`** - MTEA FSG network (VLANs, subnets)
+- **`network.pkrvars.hcl`** - Network settings (VLANs, subnets)
 - **`linux-storage.pkrvars.hcl`** - Storage pools and partitions
 
 <details>
@@ -104,7 +100,7 @@ Edit configuration files in the `config/` directory:
 proxmox_api_token_id        = "packer@pam!packer-token"
 proxmox_api_token_secret    = "<your-api-token-secret>"
 proxmox_insecure_connection = true
-proxmox_hostname            = "proxmox.mtea.local"
+proxmox_hostname            = "proxmox.local"
 proxmox_node                = "pve-node-01"
 ```
 </details>
@@ -208,10 +204,10 @@ sudo dnf -y install ansible
 ### Directory Structure
 
 ```
-mtea-fsg-automation/
+oncall/
 ├── ansible/          # Ansible roles for OS configuration
 ├── builds/           # Packer templates per OS
-├── config/           # Your MTEA FSG-specific settings (YOU EDIT THESE)
+├── config/           # Your specific settings (YOU EDIT THESE)
 ├── manifests/        # Build manifests (auto-generated)
 └── tests/            # Validation test suites
 ```
@@ -226,7 +222,7 @@ Generate configuration templates:
 ./config.sh prod         # Creates ./prod/ directory
 ```
 
-Then customize the `.pkrvars.hcl` files for your MTEA FSG infrastructure.
+Then customize the `.pkrvars.hcl` files for your infrastructure.
 
 ### Essential Configuration Files
 
@@ -236,7 +232,7 @@ Then customize the `.pkrvars.hcl` files for your MTEA FSG infrastructure.
 proxmox_api_token_id        = "packer@pam!packer-token"
 proxmox_api_token_secret    = "<api-token-secret>"
 proxmox_insecure_connection = true  // false with valid TLS cert
-proxmox_hostname            = "proxmox.mtea.local"
+proxmox_hostname            = "proxmox.local"
 proxmox_node                = "pve-node-01"
 ```
 
@@ -245,7 +241,7 @@ proxmox_node                = "pve-node-01"
 #### 2. Build User Credentials (`config/build.pkrvars.hcl`)
 
 ```hcl
-build_username           = "mtea-admin"
+build_username           = "admin"
 build_password           = "<plaintext-password>"
 build_password_encrypted = "<sha512-hash>"
 build_key                = "<ssh-public-key>"
@@ -258,7 +254,7 @@ mkpasswd -m sha512crypt
 
 Generate SSH key:
 ```bash
-ssh-keygen -t ecdsa -b 521 -C "mtea-fsg-automation"
+ssh-keygen -t ecdsa -b 521 -C "automation"
 ```
 
 #### 3. Ansible User (`config/ansible.pkrvars.hcl`)
@@ -436,7 +432,7 @@ All templates include:
 
 ## Docker Usage
 
-> **Important:** Docker containerized builds require a **Linux host**. Docker Desktop on Windows/macOS has networking limitations that prevent the Packer HTTP server from being accessible to Proxmox VMs during autoinstall. For Windows users, install Packer and Ansible directly on the host instead of using Docker.
+> **Important:** Docker containerized builds require a **Linux host**. Docker Desktop on Windows/macOS has networking limitations that prevent the Packer HTTP server from being accessible to Proxmox VMs during autoinstall.
 
 ### Quick Commands (Linux Only)
 
@@ -449,46 +445,11 @@ All templates include:
 ./docker-build.sh rebuild    # Rebuild image from scratch
 ```
 
-### Using Pre-Built Docker Image (Linux Only)
-
-Pull the pre-built image from GitHub Container Registry:
-
-**First-time setup - Authenticate with GitHub:**
-
-```bash
-# Add read:packages scope to your GitHub token
-gh auth refresh -s read:packages
-
-# Login to GitHub Container Registry
-gh auth token | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
-```
-
-**Pull and run the image:**
-
-```bash
-# Pull latest image
-docker pull ghcr.io/eagletg-development/dev-packer:latest
-
-# Or pull a specific version
-docker pull ghcr.io/eagletg-development/dev-packer:main-1a2b3c4
-
-# Run with pre-built image
-docker run -it --rm --network host \
-  -v "$(pwd):/workspace" \
-  -v "$(pwd)/config:/workspace/config" \
-  -v "$(pwd)/manifests:/workspace/manifests" \
-  -v "$HOME/.ssh:/root/.ssh:ro" \
-  ghcr.io/eagletg-development/dev-packer:latest \
-  ./build.sh
-```
-
 ### Using Docker Compose Directly
 
 ```bash
 # Build image locally
 docker-compose build
-
-# Or use pre-built image (edit docker-compose.yml to use ghcr.io image)
 
 # Run interactively
 docker-compose run --rm packer
@@ -538,7 +499,7 @@ Uses `host` network mode for Proxmox connectivity and HTTP server. Modify `netwo
 
 ```bash
 # Build image
-docker build -t mtea-fsg-automation:latest .
+docker build -t packer-proxmox:latest .
 
 # Run interactively
 docker run -it --rm --network host \
@@ -546,13 +507,13 @@ docker run -it --rm --network host \
   -v "$(pwd)/config:/workspace/config" \
   -v "$(pwd)/manifests:/workspace/manifests" \
   -v "$HOME/.ssh:/root/.ssh:ro" \
-  mtea-fsg-automation:latest
+  packer-proxmox:latest
 
 # Run single command
 docker run -it --rm --network host \
   -v "$(pwd):/workspace" \
   -v "$(pwd)/config:/workspace/config" \
-  mtea-fsg-automation:latest \
+  packer-proxmox:latest \
   ./validate.sh
 ```
 
@@ -563,8 +524,6 @@ docker run -it --rm --network host \
 - ✅ **Isolation** - No pollution of host system
 - ✅ **Easy Updates** - Pull latest image or rebuild locally
 - ✅ **Team Collaboration** - Everyone uses identical environment
-- ✅ **Pre-Built Images** - Available from GitHub Container Registry (ghcr.io)
-- ✅ **CI/CD Ready** - Automated builds on every commit
 
 ---
 
@@ -635,7 +594,7 @@ Deploy VMs from templates using Terraform. See:
 **Solution**:
 1. Verify all required config files edited
 2. Check Proxmox credentials are correct
-3. Test connectivity: `ping proxmox.mtea.local`
+3. Test connectivity: `ping proxmox.local`
 
 ### Build Timeouts
 
@@ -715,42 +674,6 @@ sudo chown -R $(id -u):$(id -g) config/ manifests/
 
 ---
 
-## CI/CD Integration
-
-### GitHub Actions
-
-```yaml
-name: Validate Packer Templates
-
-on: [push, pull_request]
-
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Build Docker Image
-        run: docker-compose build
-      
-      - name: Validate Templates
-        run: docker-compose run --rm packer ./validate.sh
-```
-
-### GitLab CI
-
-```yaml
-validate:
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker-compose build
-    - docker-compose run --rm packer ./validate.sh
-```
-
----
-
 ## Known Issues
 
 ### Windows Builds
@@ -774,9 +697,6 @@ Pinned to v1.2.1 due to [CPU bug](https://github.com/hashicorp/packer-plugin-pro
 
 ## Credits
 
-**Maintained by**: MTEA Federal Services Group  
-**Organization**: Modoc Tribal Enterprise Authority
-
 **Based on**:
 - [proxmox-packer-examples](https://github.com/ajschroeder/proxmox-packer-examples) by ajschroeder
 - [packer-examples-for-vsphere](https://github.com/vmware-samples/packer-examples-for-vsphere) by VMware
@@ -789,5 +709,5 @@ Pinned to v1.2.1 due to [CPU bug](https://github.com/hashicorp/packer-plugin-pro
 
 ---
 
-**MTEA Federal Services Group**  
+**Infrastructure as Code**  
 Network Automation & Infrastructure Engineering

@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mtea-fsg-automation:latest
-    container_name: mtea-fsg-packer
+    image: packer-proxmox:latest
+    container_name: packer-proxmox
     volumes:
       # Mount the entire project directory
       - .:/workspace
@@ -30,7 +30,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mtea-fsg-automation:latest
+    image: packer-proxmox:latest
     volumes:
       - .:/workspace
       - ./config:/workspace/config
