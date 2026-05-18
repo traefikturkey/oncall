@@ -228,6 +228,33 @@ build {
       "--extra-vars", "enable_cloudinit='${var.vm_cloudinit}'",
     ]
   }
+  
+  provisioner "shell" { 
+    inline = [
+
+      # Re-enable cloud-init networking
+      "sudo rm -f /etc/cloud/cloud.cfg.d/00-subiquity-disable-cloudinit-networking.cfg",
+
+      # Remove installer-created netplan
+      "sudo rm -f /etc/netplan/00-installer-config.yaml",
+
+      # Improve Proxmox datasource detection
+      "echo 'datasource_list: [ NoCloud, ConfigDrive ]' | sudo tee /etc/cloud/cloud.cfg.d/99-pve.cfg",
+
+      # Generate clean netplan state
+      "sudo netplan generate",
+
+      # Clean cloud-init state for template reuse
+      "sudo cloud-init clean --logs",
+
+      # Reset machine identity
+      "sudo truncate -s 0 /etc/machine-id",
+      "sudo rm -f /var/lib/dbus/machine-id",
+
+      # Remove old cloud-init cache
+      "sudo rm -rf /var/lib/cloud/*"
+  ]
+}
 
   post-processor "manifest" {
     output     = local.manifest_output
