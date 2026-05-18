@@ -225,6 +225,19 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    inline = [
+      "sudo rm -f /etc/cloud/cloud.cfg.d/00-subiquity-disable-cloudinit-networking.cfg",
+      "sudo rm -f /etc/netplan/00-installer-config.yaml",
+      "echo 'datasource_list: [ NoCloud, ConfigDrive ]' | sudo tee /etc/cloud/cloud.cfg.d/99-pve.cfg",
+      "sudo netplan generate",
+      "sudo cloud-init clean --logs",
+      "sudo truncate -s 0 /etc/machine-id",
+      "sudo rm -f /var/lib/dbus/machine-id",
+      "sudo rm -rf /var/lib/cloud/*"
+    ]
+  }
+
   post-processor "manifest" {
     output     = local.manifest_output
     strip_path = true
