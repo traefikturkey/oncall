@@ -47,11 +47,16 @@ check_docker() {
         exit 1
     fi
 
-    if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-        echo -e "${RED}Error: Docker Compose is not installed${NC}"
-        echo "Please install Docker Compose from: https://docs.docker.com/compose/install/"
-        exit 1
-    fi
+    if command -v docker-compose &> /dev/null; then
+      DOCKER_BINARY="docker-compose"
+    elif docker compose version &> /dev/null 2>&1; then
+      DOCKER_BINARY="docker compose"
+    else
+      echo -e "${RED}Error: Docker Compose is not installed${NC}"
+      echo "Please install Docker Compose from: https://docs.docker.com/compose/install/"
+    exit 1
+fi
+
 }
 
 check_config() {
@@ -68,7 +73,7 @@ check_config() {
 
 build_image() {
     echo -e "${BLUE}Building Docker image...${NC}"
-    docker-compose build
+    $DOCKER_BINARY build
     echo -e "${GREEN}Docker image built successfully${NC}"
 }
 
@@ -108,7 +113,7 @@ run_build() {
     }
 
     echo -e "${BLUE}Starting interactive build...${NC}"
-    docker-compose run --rm packer ./build.sh "$@"
+    $DOCKER_BINARY run --rm packer ./build.sh "$@"
 }
 
 run_validate() {
@@ -120,13 +125,13 @@ run_validate() {
     }
 
     echo -e "${BLUE}Validating Packer templates...${NC}"
-    docker-compose run --rm packer ./validate.sh "$@"
+    $DOCKER_BINARY run --rm packer ./validate.sh "$@"
 }
 
 run_shell() {
     print_header
     echo -e "${BLUE}Opening shell in container...${NC}"
-    docker-compose run --rm packer /bin/bash
+    $DOCKER_BINARY run --rm packer /bin/bash
 }
 
 clean() {
@@ -136,7 +141,7 @@ clean() {
     read -r response
     if [[ "$response" =~ ^[Yy]$ ]]; then
         echo -e "${BLUE}Cleaning up...${NC}"
-        docker-compose down -v
+        $DOCKER_BINARY down -v
         docker rmi packer-proxmox:latest 2>/dev/null || true
         echo -e "${GREEN}Cleanup complete${NC}"
     else
@@ -147,7 +152,7 @@ clean() {
 rebuild() {
     print_header
     echo -e "${BLUE}Rebuilding Docker image from scratch...${NC}"
-    docker-compose build --no-cache
+    $DOCKER_BINARY build --no-cache
     echo -e "${GREEN}Rebuild complete${NC}"
 }
 
