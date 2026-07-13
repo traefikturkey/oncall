@@ -27,6 +27,8 @@ vm_disk_format          = "raw"
 vm_disk_controller_type = "virtio-scsi-pci"
 vm_network_card_model   = "virtio"
 vm_id_number            = "10015"
+build_user_passwordless_sudo   = true
+ansible_user_passwordless_sudo = true
 
 // Removable Media Settings
 iso_path     = "iso"

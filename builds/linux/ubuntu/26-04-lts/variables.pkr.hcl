@@ -289,6 +289,12 @@ variable "build_key" {
   #  sensitive   = true
 }
 
+variable "build_user_passwordless_sudo" {
+  type        = bool
+  description = "Allow the build account to run sudo commands without a password."
+  default     = true
+}
+
 variable "ssh_authorized_keys" {
   type        = list(string)
   description = "Public SSH keys authorized for the build user when fixed SSH key mode is enabled."
@@ -324,6 +330,12 @@ variable "ansible_key" {
   type        = string
   description = "The public key for Ansible to login to the guest operating system."
   #  sensitive   = true
+}
+
+variable "ansible_user_passwordless_sudo" {
+  type        = bool
+  description = "Allow the Ansible automation account to run sudo commands without a password."
+  default     = true
 }
 
 // HCP Packer Settings

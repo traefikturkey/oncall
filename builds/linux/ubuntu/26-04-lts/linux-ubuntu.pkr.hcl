@@ -60,15 +60,15 @@ locals {
     // This sends the "enter" key. This is typically used to execute the command.
     "<enter>"
   ]
-  build_by          = "Built by: HashiCorp Packer ${packer.version}"
-  build_date        = formatdate("DD-MM-YYYY hh:mm ZZZ", "${timestamp()}")
-  build_version     = data.git-repository.cwd.head
-  build_description = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}\nCloud-Init: ${var.vm_cloudinit}"
-  vm_disk_type      = var.vm_disk_type == "virtio" ? "vda" : "sda"
-  manifest_date     = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
-  manifest_path     = "${path.cwd}/manifests/"
-  manifest_output   = "${local.manifest_path}${local.manifest_date}.json"
-  ssh_authorized_keys = var.use_fixed_ssh_key ? var.ssh_authorized_keys : []
+  build_by             = "Built by: HashiCorp Packer ${packer.version}"
+  build_date           = formatdate("DD-MM-YYYY hh:mm ZZZ", "${timestamp()}")
+  build_version        = data.git-repository.cwd.head
+  build_description    = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}\nCloud-Init: ${var.vm_cloudinit}"
+  vm_disk_type         = var.vm_disk_type == "virtio" ? "vda" : "sda"
+  manifest_date        = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
+  manifest_path        = "${path.cwd}/manifests/"
+  manifest_output      = "${local.manifest_path}${local.manifest_date}.json"
+  ssh_authorized_keys  = var.use_fixed_ssh_key ? var.ssh_authorized_keys : []
   ssh_private_key_file = var.use_fixed_ssh_key ? var.ssh_private_key_file : null
   data_source_content = {
     "/meta-data" = file("${abspath(path.root)}/data/meta-data")
@@ -76,6 +76,7 @@ locals {
       build_username           = var.build_username
       build_password           = var.build_password
       build_password_encrypted = var.build_password_encrypted
+      build_user_sudo_prefix   = var.build_user_passwordless_sudo ? "NOPASSWD:" : ""
       ssh_authorized_keys      = local.ssh_authorized_keys
       vm_disk_type             = local.vm_disk_type
       vm_os_language           = var.vm_os_language
@@ -225,36 +226,11 @@ build {
       "--extra-vars", "build_key='${var.build_key}'",
       "--extra-vars", "ansible_username=${var.ansible_username}",
       "--extra-vars", "ansible_key='${var.ansible_key}'",
+      "--extra-vars", "build_user_passwordless_sudo=${var.build_user_passwordless_sudo}",
+      "--extra-vars", "ansible_user_passwordless_sudo=${var.ansible_user_passwordless_sudo}",
       "--extra-vars", "enable_cloudinit='${var.vm_cloudinit}'",
     ]
   }
-  
-  provisioner "shell" { 
-    inline = [
-
-      # Re-enable cloud-init networking
-      "sudo rm -f /etc/cloud/cloud.cfg.d/00-subiquity-disable-cloudinit-networking.cfg",
-
-      # Remove installer-created netplan
-      "sudo rm -f /etc/netplan/00-installer-config.yaml",
-
-      # Improve Proxmox datasource detection
-      "echo 'datasource_list: [ NoCloud, ConfigDrive ]' | sudo tee /etc/cloud/cloud.cfg.d/99-pve.cfg",
-
-      # Generate clean netplan state
-      "sudo netplan generate",
-
-      # Clean cloud-init state for template reuse
-      "sudo cloud-init clean --logs",
-
-      # Reset machine identity
-      "sudo truncate -s 0 /etc/machine-id",
-      "sudo rm -f /var/lib/dbus/machine-id",
-
-      # Remove old cloud-init cache
-      "sudo rm -rf /var/lib/cloud/*"
-  ]
-}
 
   post-processor "manifest" {
     output     = local.manifest_output

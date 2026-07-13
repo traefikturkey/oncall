@@ -26,9 +26,10 @@ ${network}
     - qemu-guest-agent
     - cloud-init
   user-data:
-    disable_root: false
+    disable_root: true
     timezone: ${vm_os_timezone}
   late-commands:
     - sed -i -e 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /target/etc/ssh/sshd_config
-    - echo '${build_username} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/${build_username}
+    - sed -i -e 's/^#\?PermitRootLogin.*/PermitRootLogin no/g' /target/etc/ssh/sshd_config
+    - echo '${build_username} ALL=(ALL) ${build_user_sudo_prefix}ALL' > /target/etc/sudoers.d/${build_username}
     - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/${build_username}

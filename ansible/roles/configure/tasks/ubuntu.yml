@@ -6,10 +6,17 @@
 
 # Tasks for configuring SSH for public key authentication.
 - name: "Configuring SSH for Public Key Authentication."
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PubkeyAuthentication'
-    line: 'PubkeyAuthentication yes'
+  block:
+    - name: "Enabling SSH public key authentication."
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+    - name: "Disabling direct root SSH login."
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
 
 # Tasks for setting the hostname.
 - name: "Setting the hostname."
@@ -77,13 +84,17 @@
         path: "{{ item }}"
         state: absent
       loop:
+        - /etc/cloud/cloud.cfg.d/00-subiquity-disable-cloudinit-networking.cfg
         - /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
         - /etc/cloud/cloud.cfg.d/99-installer.cfg
         - /etc/cloud/cloud.cfg.d/90-installer-network.cfg
         - /etc/netplan/00-installer-config.yaml
     - ansible.builtin.copy:
-        content: "datasource_list: [ NoCloud, ConfigDrive ]"
+        content: "datasource_list: [ NoCloud, ConfigDrive ]\n"
         dest: /etc/cloud/cloud.cfg.d/99_pve.cfg
+        owner: root
+        group: root
+        mode: '0644'
     - ansible.builtin.file:
         path: /etc/cloud/cloud-init.disabled
         state: absent
@@ -100,4 +111,3 @@
       fi
       exit 0
     mode: 0755
-

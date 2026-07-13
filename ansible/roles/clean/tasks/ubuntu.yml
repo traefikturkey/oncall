@@ -103,3 +103,13 @@
     ansible.builtin.file:
       path: "{{ ansible_env.HOME }}/.bash_history"
       state: absent
+
+# This must remain the final template-cleaning task so cloned VMs rerun cloud-init.
+- name: "Cleaning cloud-init state."
+  ansible.builtin.command:
+    argv:
+      - cloud-init
+      - clean
+      - --logs
+  changed_when: true
+  when: enable_cloudinit | bool

@@ -35,12 +35,18 @@
       key: "{{ build_key }}"
   no_log: true
 
-# Tasks for managing sudoers.d for the local users.
-- name: "Managing sudoers.d for the local users."
+# Tasks for managing sudoers.d for the build user.
+- name: "Managing sudoers.d for the build user."
   community.general.sudoers:
-    name: "{{ item }}"
-    user: "{{ item }}"
+    name: "{{ build_username }}"
+    user: "{{ build_username }}"
     commands: ALL
-  loop:
-    - "{{ build_username }}"
-    - "{{ ansible_username }}"
+    nopassword: "{{ build_user_passwordless_sudo | bool }}"
+
+# Tasks for managing sudoers.d for the Ansible user.
+- name: "Managing sudoers.d for the Ansible user."
+  community.general.sudoers:
+    name: "{{ ansible_username }}"
+    user: "{{ ansible_username }}"
+    commands: ALL
+    nopassword: "{{ ansible_user_passwordless_sudo | bool }}"

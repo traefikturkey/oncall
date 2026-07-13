@@ -57,6 +57,26 @@ All templates include:
 - Cloud-init support (Linux)
 - Latest security updates at build time
 
+### Account credential guidance
+
+The build/local account and the Ansible automation account serve different
+purposes and should not share credentials. Configure a separate SSH key for
+each account. If password authentication is enabled in a local or homelab
+configuration, use a different password for each account as well.
+
+Ubuntu 26.04 also provides separate passwordless-sudo controls for these
+accounts. Both default to `true` to preserve the existing automated build
+behavior. Set either value to `false` to require that account to authenticate
+when using sudo. Keep the accounts separate when assigning different policies;
+if both settings refer to the same username, a passwordless sudo rule still
+grants that user passwordless elevation.
+
+```hcl
+// config/linux-ubuntu-26-04-lts.pkrvars.hcl
+build_user_passwordless_sudo   = true
+ansible_user_passwordless_sudo = true
+```
+
 ---
 
 ## Quick Start
@@ -288,6 +308,20 @@ ssh-keygen -t ecdsa -b 521 -C "automation"
 ansible_username = "ansible"
 ansible_key      = "<ansible-ssh-public-key>"
 ```
+
+For Ubuntu 26.04, configure each account's sudo policy in the OS-specific
+variable file:
+
+```hcl
+// config/linux-ubuntu-26-04-lts.pkrvars.hcl
+build_user_passwordless_sudo   = true
+ansible_user_passwordless_sudo = true
+```
+
+These values are independent. The build-user setting controls the account
+created by Subiquity and retained by Ansible. The Ansible-user setting controls
+the dedicated automation account. Setting a value to `false` removes
+`NOPASSWD` from that account's sudoers rule; it does not remove sudo access.
 
 #### 4. Network Settings (`config/network.pkrvars.hcl`)
 
