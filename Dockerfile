@@ -19,6 +19,7 @@ RUN apt-get update && \
     openssh-client \
     jq \
     unzip \
+    xorriso \
     && update-ca-certificates
 
 # Install Packer
