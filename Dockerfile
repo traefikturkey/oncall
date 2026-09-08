@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
-    PACKER_VERSION=1.12.0 \
+    PACKER_VERSION=1.16.0 \
     ANSIBLE_VERSION=2.17 \
     PATH="$HOME/.local/bin:$PATH"
 
@@ -30,17 +30,26 @@ RUN mkdir -m 0755 -p /etc/apt/keyrings/ && \
     apt-get install -y packer
 
 # Install Python3 and Ansible
-RUN add-apt-repository --yes --update ppa:ansible/ansible && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y \
     python3 \
     python3-pip \
-    python3-venv \
-    ansible-core \
-    && ansible-galaxy collection install ansible.posix community.general
+    python3-venv
+    # ansible-core \
+    # && ansible-galaxy collection install ansible.posix community.general
 
 # Update pip, setuptools, and wheel to latest versions (security)
+# RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create an isolated Python environment.
 RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install Ansible and collections
+RUN python3 -m pip install --no-cache-dir ansible-core \
+    && ansible-galaxy collection install ansible.posix community.general
 
 # Cleanup
 RUN apt-get autoremove -y && \
