@@ -40,6 +40,12 @@ RUN add-apt-repository --yes --update ppa:ansible/ansible && \
     && ansible-galaxy collection install ansible.posix community.general
 
 # Update pip, setuptools, and wheel to latest versions (security)
+# RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create an isolated Python environment.
 RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Cleanup
